@@ -26,6 +26,7 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/vendor/**
+            config/db.php
             config/db.local.php
             assets/uploads/**
             tools/hosting-check.php
