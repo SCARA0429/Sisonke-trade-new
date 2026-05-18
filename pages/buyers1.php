@@ -5,11 +5,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/includes/marketplace_service.php';
 require_once dirname(__DIR__) . '/includes/i18n.php';
 
-$publicBase = getenv('SISONKE_BASE_URL');
-$base = is_string($publicBase) && $publicBase !== ''
-    ? $publicBase
-    : '/Sisonke Trade/sisonke-trade';
-$assetBase = htmlspecialchars(str_replace(' ', '%20', $base), ENT_QUOTES, 'UTF-8');
+$assetBase = htmlspecialchars(str_replace(' ', '%20', SISONKE_BASE_URL), ENT_QUOTES, 'UTF-8');
 $cssVersion = filemtime(dirname(__DIR__) . '/assets/css/style.css') ?: time();
 $currentLanguage = sisonke_current_language();
 $languageOptions = sisonke_supported_languages();
