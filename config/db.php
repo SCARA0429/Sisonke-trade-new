@@ -35,6 +35,11 @@ if (!defined('SISONKE_BASE_URL')) {
     );
 }
 
+$localConfig = __DIR__ . '/db.local.php';
+if (is_file($localConfig)) {
+    require_once $localConfig;
+}
+
 if (!defined('DB_HOST')) {
     define('DB_HOST', getenv('SISONKE_DB_HOST') ?: 'localhost');
 }
