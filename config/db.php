@@ -2,13 +2,36 @@
 
 declare(strict_types=1);
 
+if (!function_exists('sisonke_detect_base_url')) {
+    function sisonke_detect_base_url(): string
+    {
+        $scriptName = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+        if ($scriptName === '') {
+            return '';
+        }
+
+        $dir = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
+        if ($dir === '.' || $dir === '/') {
+            return '';
+        }
+
+        foreach (['/admin', '/api', '/pages', '/seller', '/setup'] as $section) {
+            if (substr($dir, -strlen($section)) === $section) {
+                return substr($dir, 0, -strlen($section)) ?: '';
+            }
+        }
+
+        return $dir;
+    }
+}
+
 if (!defined('SISONKE_BASE_URL')) {
     $publicBase = getenv('SISONKE_BASE_URL');
     define(
         'SISONKE_BASE_URL',
         is_string($publicBase) && $publicBase !== ''
-            ? $publicBase
-            : '/Sisonke%20Trade/sisonke-trade'
+            ? rtrim($publicBase, '/')
+            : sisonke_detect_base_url()
     );
 }
 
