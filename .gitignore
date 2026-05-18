@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+
+vendor/
+node_modules/
+
+*.log
+*.tmp
+*.bak
+
+assets/uploads/*
+!assets/uploads/.gitkeep
+
+.DS_Store
+Thumbs.db
