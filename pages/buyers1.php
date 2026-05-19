@@ -133,6 +133,31 @@ $reasons = [
             </div>
         </section>
 
+        <section class="buyer-how" id="how-it-works" aria-labelledby="how-it-works-title">
+            <div class="buyer-shell">
+                <div class="buyer-section-head">
+                    <h2 id="how-it-works-title">How it works</h2>
+                </div>
+                <div class="buyer-how-grid">
+                    <article class="buyer-how-step">
+                        <span>01</span>
+                        <h3>Join a campaign</h3>
+                        <p>Choose a bulk deal with your community and reserve the quantity you need.</p>
+                    </article>
+                    <article class="buyer-how-step">
+                        <span>02</span>
+                        <h3>Pay into escrow</h3>
+                        <p>Your payment is held securely while the group reaches the campaign target.</p>
+                    </article>
+                    <article class="buyer-how-step">
+                        <span>03</span>
+                        <h3>Collect together</h3>
+                        <p>When the target is met, the seller fulfils the order and buyers confirm delivery.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
         <section class="buyer-campaigns" id="deals">
             <div class="buyer-shell">
                 <div class="buyer-section-head">

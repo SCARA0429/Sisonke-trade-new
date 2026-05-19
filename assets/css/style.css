@@ -142,6 +142,8 @@ body {
 .buyer-kicker,
 .buyer-hero h1,
 .buyer-subline,
+.buyer-how h2,
+.buyer-how h3,
 .buyer-community h2,
 .buyer-community h3,
 .buyer-cta h2,
@@ -438,6 +440,61 @@ body {
 .buyer-campaigns {
   padding: 6rem 0;
   background: var(--buyer-sand);
+}
+
+.buyer-how {
+  padding: 5rem 0 6rem;
+  background: var(--buyer-red);
+  border-top: 12px solid var(--buyer-yellow);
+  color: #fff;
+}
+
+.buyer-how .buyer-section-head {
+  margin-bottom: 3rem;
+}
+
+.buyer-how .buyer-section-head h2 {
+  border-left-color: var(--buyer-yellow);
+  color: #fff;
+}
+
+.buyer-how-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.buyer-how-step {
+  min-width: 0;
+  padding: 2rem;
+  border: 4px solid #fff;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.buyer-how-step span {
+  display: inline-grid;
+  min-width: 3rem;
+  min-height: 3rem;
+  margin-bottom: 1.5rem;
+  place-items: center;
+  background: var(--buyer-yellow);
+  color: var(--buyer-ink);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.buyer-how-step h3 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1;
+}
+
+.buyer-how-step p {
+  margin: 0;
+  color: #ffefed;
+  font-size: 1rem;
+  line-height: 1.55;
 }
 
 .buyer-section-head {
@@ -875,6 +932,7 @@ body {
   }
 
   .buyer-card-grid,
+  .buyer-how-grid,
   .buyer-community-grid,
   .buyer-footer-top {
     grid-template-columns: 1fr;
