@@ -160,3 +160,139 @@ CREATE TABLE IF NOT EXISTS disputes (
   CONSTRAINT disputes_seller_fk FOREIGN KEY (seller_id)
     REFERENCES sellers (seller_id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Demo data
+-- All demo accounts use the password: Password123
+SET @demo_password_hash = '$2y$10$RZXu.X.VgUq.QhuKDg7jdu6yzSRHYaYZmNdSZ01JHttZgvBlx7jTS';
+
+INSERT INTO users (email, password_hash, full_name, role, is_active)
+VALUES
+  ('admin@sisonke.test', @demo_password_hash, 'Nandi Mokoena', 'admin', 1),
+  ('seller@sisonke.test', @demo_password_hash, 'Thabo Dlamini', 'seller', 1),
+  ('buyer@sisonke.test', @demo_password_hash, 'Lerato Nkosi', 'buyer', 1)
+ON DUPLICATE KEY UPDATE
+  password_hash = VALUES(password_hash),
+  full_name = VALUES(full_name),
+  role = VALUES(role),
+  is_active = VALUES(is_active);
+
+SET @admin_id = (SELECT user_id FROM users WHERE email = 'admin@sisonke.test' LIMIT 1);
+SET @seller_id = (SELECT user_id FROM users WHERE email = 'seller@sisonke.test' LIMIT 1);
+SET @buyer_id = (SELECT user_id FROM users WHERE email = 'buyer@sisonke.test' LIMIT 1);
+
+INSERT INTO admins (admin_id, permission_level, can_resolve_disputes, can_manage_users)
+VALUES (@admin_id, 'super_admin', 1, 1)
+ON DUPLICATE KEY UPDATE
+  permission_level = VALUES(permission_level),
+  can_resolve_disputes = VALUES(can_resolve_disputes),
+  can_manage_users = VALUES(can_manage_users);
+
+INSERT INTO sellers (seller_id, business_name, verification_status, reputation_score, total_sales)
+VALUES (@seller_id, 'Bhekizizwe Traders', 'verified', 4.80, 0)
+ON DUPLICATE KEY UPDATE
+  business_name = VALUES(business_name),
+  verification_status = VALUES(verification_status),
+  reputation_score = VALUES(reputation_score);
+
+INSERT INTO buyers (buyer_id, delivery_address, total_purchases, total_confirmations)
+VALUES (@buyer_id, '321 Vilakazi Street, Soweto', 0, 0)
+ON DUPLICATE KEY UPDATE
+  delivery_address = VALUES(delivery_address);
+
+INSERT INTO products (seller_id, name, description, category, unit_price, quantity_available, image_url, is_active)
+SELECT @seller_id, '10KG Maize Meal', 'Premium white maize meal for household and spaza shop bulk buying.', 'Groceries', 105.00, 180, NULL, 1
+WHERE NOT EXISTS (
+  SELECT 1 FROM products WHERE seller_id = @seller_id AND name = '10KG Maize Meal'
+);
+
+INSERT INTO products (seller_id, name, description, category, unit_price, quantity_available, image_url, is_active)
+SELECT @seller_id, 'School Shoes', 'Durable black school shoes for primary learners and uniform resellers.', 'School goods', 165.00, 80, NULL, 1
+WHERE NOT EXISTS (
+  SELECT 1 FROM products WHERE seller_id = @seller_id AND name = 'School Shoes'
+);
+
+INSERT INTO products (seller_id, name, description, category, unit_price, quantity_available, image_url, is_active)
+SELECT @seller_id, 'Grocery Mix', 'Community pantry pack with oil, sugar, tea, beans, rice, and soap.', 'Household essentials', 520.00, 45, NULL, 1
+WHERE NOT EXISTS (
+  SELECT 1 FROM products WHERE seller_id = @seller_id AND name = 'Grocery Mix'
+);
+
+SET @maize_id = (SELECT product_id FROM products WHERE seller_id = @seller_id AND name = '10KG Maize Meal' LIMIT 1);
+SET @shoes_id = (SELECT product_id FROM products WHERE seller_id = @seller_id AND name = 'School Shoes' LIMIT 1);
+SET @grocery_id = (SELECT product_id FROM products WHERE seller_id = @seller_id AND name = 'Grocery Mix' LIMIT 1);
+
+INSERT INTO group_buy_campaigns
+  (seller_id, product_id, campaign_price, min_participants, max_participants, target_quantity, target_amount, deadline, status)
+SELECT @seller_id, @maize_id, 89.00, 10, 120, 80, 7120.00, DATE_ADD(NOW(), INTERVAL 21 DAY), 'active'
+WHERE NOT EXISTS (
+  SELECT 1 FROM group_buy_campaigns WHERE seller_id = @seller_id AND product_id = @maize_id
+);
+
+INSERT INTO group_buy_campaigns
+  (seller_id, product_id, campaign_price, min_participants, max_participants, target_quantity, target_amount, deadline, status)
+SELECT @seller_id, @shoes_id, 120.00, 8, 60, 40, 4800.00, DATE_ADD(NOW(), INTERVAL 14 DAY), 'active'
+WHERE NOT EXISTS (
+  SELECT 1 FROM group_buy_campaigns WHERE seller_id = @seller_id AND product_id = @shoes_id
+);
+
+INSERT INTO group_buy_campaigns
+  (seller_id, product_id, campaign_price, min_participants, max_participants, target_quantity, target_amount, deadline, status)
+SELECT @seller_id, @grocery_id, 450.00, 5, 35, 25, 11250.00, DATE_ADD(NOW(), INTERVAL 10 DAY), 'active'
+WHERE NOT EXISTS (
+  SELECT 1 FROM group_buy_campaigns WHERE seller_id = @seller_id AND product_id = @grocery_id
+);
+
+SET @maize_campaign_id = (
+  SELECT campaign_id FROM group_buy_campaigns
+  WHERE seller_id = @seller_id AND product_id = @maize_id
+  LIMIT 1
+);
+
+INSERT INTO escrow_payments (campaign_id, total_amount, status, confirmations_required)
+SELECT @maize_campaign_id, 267.00, 'held', 1
+WHERE NOT EXISTS (
+  SELECT 1 FROM campaign_participants WHERE buyer_id = @buyer_id AND campaign_id = @maize_campaign_id
+);
+
+SET @demo_escrow_id = (
+  SELECT escrow_id FROM escrow_payments
+  WHERE campaign_id = @maize_campaign_id AND total_amount = 267.00
+  ORDER BY escrow_id DESC
+  LIMIT 1
+);
+
+INSERT INTO campaign_participants (campaign_id, buyer_id, quantity, amount_paid)
+SELECT @maize_campaign_id, @buyer_id, 3, 267.00
+WHERE NOT EXISTS (
+  SELECT 1 FROM campaign_participants WHERE buyer_id = @buyer_id AND campaign_id = @maize_campaign_id
+);
+
+SET @demo_participant_id = (
+  SELECT participant_id FROM campaign_participants
+  WHERE buyer_id = @buyer_id AND campaign_id = @maize_campaign_id
+  LIMIT 1
+);
+
+UPDATE group_buy_campaigns
+SET current_quantity = GREATEST(current_quantity, 3)
+WHERE campaign_id = @maize_campaign_id;
+
+INSERT INTO transactions
+  (escrow_id, participant_id, buyer_id, seller_id, amount, payment_method, status, reference_number)
+SELECT @demo_escrow_id, @demo_participant_id, @buyer_id, @seller_id, 267.00, 'payfast_sandbox', 'completed', 'ST-DEMO-000001'
+WHERE NOT EXISTS (
+  SELECT 1 FROM transactions WHERE reference_number = 'ST-DEMO-000001'
+);
+
+INSERT INTO disputes (participant_id, campaign_id, buyer_id, seller_id, reason, details, status)
+SELECT
+  @demo_participant_id,
+  @maize_campaign_id,
+  @buyer_id,
+  @seller_id,
+  'Pickup window missed',
+  'Demo case for admin moderation and escrow review screenshots.',
+  'reviewing'
+WHERE NOT EXISTS (
+  SELECT 1 FROM disputes WHERE participant_id = @demo_participant_id
+);
