@@ -123,8 +123,30 @@
     updateLabels();
   }
 
+  function bindSellerProductHighlight() {
+    var page = document.querySelector('[data-highlight-product]');
+    if (!page) {
+      return;
+    }
+
+    var productId = page.getAttribute('data-highlight-product');
+    if (!productId) {
+      return;
+    }
+
+    var row = document.getElementById('product-' + productId);
+    if (!row) {
+      return;
+    }
+
+    window.setTimeout(function () {
+      row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 120);
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     bindLoginForm();
     bindRoleFormHints();
+    bindSellerProductHighlight();
   });
 })();

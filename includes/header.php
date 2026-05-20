@@ -15,7 +15,10 @@ $base = SISONKE_BASE_URL;
 $baseHref = htmlspecialchars(str_replace(' ', '%20', $base), ENT_QUOTES, 'UTF-8');
 $role = (string) ($_SESSION['user_role'] ?? 'guest');
 $name = (string) ($_SESSION['user_name'] ?? '');
-$assetVersion = filemtime(dirname(__DIR__) . '/assets/css/style.css') ?: time();
+$assetVersion = max(
+    (int) (filemtime(dirname(__DIR__) . '/assets/css/style.css') ?: 0),
+    (int) (filemtime(dirname(__DIR__) . '/assets/js/main.js') ?: 0)
+) ?: time();
 $currentLanguage = sisonke_current_language();
 $languageOptions = sisonke_supported_languages();
 $showLanguageSelector = $role !== 'admin';

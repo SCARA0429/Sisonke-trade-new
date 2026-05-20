@@ -15,6 +15,6 @@ $baseHref = htmlspecialchars(str_replace(' ', '%20', $base), ENT_QUOTES, 'UTF-8'
     </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-<script src="<?= $baseHref ?>/assets/js/main.js"></script>
+<script src="<?= $baseHref ?>/assets/js/main.js?v=<?= (int) $assetVersion ?>"></script>
 </body>
 </html>

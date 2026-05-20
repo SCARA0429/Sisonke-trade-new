@@ -1208,6 +1208,185 @@ body {
   color: #c8b384;
 }
 
+.st-flow-progress {
+  padding: 1rem 1.25rem;
+  border: 3px solid var(--st-black);
+  background: #fffdf5;
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.1);
+}
+
+.st-flow-progress-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.st-flow-step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 3px solid #d8d0c0;
+  background: #f5f1e8;
+  color: var(--st-muted);
+}
+
+.st-flow-step.is-active {
+  border-color: var(--st-red);
+  background: #fff;
+  color: var(--st-ink);
+  box-shadow: 4px 4px 0 rgba(196, 30, 58, 0.2);
+}
+
+.st-flow-step.is-complete {
+  border-color: #1f7a3f;
+  background: #f4fff7;
+  color: var(--st-ink);
+}
+
+.st-flow-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  border: 3px solid currentColor;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.st-flow-step.is-active .st-flow-step-num {
+  background: var(--st-yellow);
+  border-color: var(--st-black);
+  color: var(--st-ink);
+}
+
+.st-flow-step.is-complete .st-flow-step-num {
+  background: #1f7a3f;
+  border-color: #145c2f;
+  color: #fff;
+}
+
+.st-flow-step-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
+.st-seller-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.st-seller-step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: start;
+  padding: 1rem;
+  border: 3px solid var(--st-black);
+  background: #fff;
+}
+
+.st-seller-step.is-complete {
+  border-color: #1f7a3f;
+  background: #f4fff7;
+}
+
+.st-seller-step.is-current {
+  border-color: var(--st-red);
+  box-shadow: 4px 4px 0 rgba(196, 30, 58, 0.18);
+}
+
+.st-seller-step.is-locked {
+  opacity: 0.72;
+}
+
+.st-seller-step-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 3px solid var(--st-black);
+  background: var(--st-yellow);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.st-seller-step.is-complete .st-seller-step-marker {
+  background: #1f7a3f;
+  color: #fff;
+  border-color: #145c2f;
+}
+
+.st-seller-step.is-locked .st-seller-step-marker {
+  background: #ece7dc;
+}
+
+.st-seller-step-body strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.st-launch-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 3px solid var(--st-red);
+  background: #fff8e8;
+  box-shadow: 4px 4px 0 rgba(196, 30, 58, 0.15);
+}
+
+.st-card-launch {
+  border-color: var(--st-red);
+}
+
+.st-product-pick {
+  padding: 0.85rem 1rem;
+  border: 3px solid var(--st-black);
+  background: #fffdf5;
+}
+
+tr.is-highlighted {
+  background: #fff6cc;
+  outline: 3px solid var(--st-yellow);
+  outline-offset: -3px;
+}
+
+.st-btn-muted {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0.65rem 1rem;
+  border: 3px dashed var(--st-black);
+  background: #ece7dc;
+  color: var(--st-muted);
+  cursor: not-allowed;
+}
+
+.st-link {
+  color: var(--st-red);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.st-link:hover,
+.st-link:focus {
+  color: var(--st-red-dark);
+}
+
 .st-btn {
   display: inline-flex;
   align-items: center;

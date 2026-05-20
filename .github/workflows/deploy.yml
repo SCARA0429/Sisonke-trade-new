@@ -6,9 +6,43 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  deploy:
+  lint:
+    name: PHP syntax check
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: Lint every PHP file
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(find . -type f -name '*.php' \
+            -not -path './vendor/*' \
+            -not -path './node_modules/*' \
+            -not -path './.git/*')
+          for f in "${files[@]}"; do
+            php -l "$f" >/dev/null
+          done
+          echo "Linted ${#files[@]} PHP files."
+
+  deploy:
+    name: FTP deploy to InfinityFree
+    needs: lint
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: http://sisonketrade.xo.je/
 
     steps:
       - name: Checkout
@@ -17,16 +51,29 @@ jobs:
       - name: Deploy by FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ftp.infinityfree.com
-          username: if0_41954067
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /htdocs/
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          protocol: ftp
+          port: 21
+          log-level: minimal
+          dangerous-clean-slate: false
           exclude: |
             **/.git*
             **/.git*/**
+            **/.github/**
             **/node_modules/**
             **/vendor/**
-            config/db.php
             config/db.local.php
+            config/db.local.example.php
+            setup/**
+            docs/**
+            tools/**
             assets/uploads/**
-            tools/hosting-check.php
+            .gitignore
+            README.md
+            *.md
+            *.log
+            *.bak
+            *.tmp

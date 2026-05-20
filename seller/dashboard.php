@@ -10,6 +10,9 @@ require_once dirname(__DIR__) . '/includes/i18n.php';
 $sellerId = (int) $_SESSION['user_id'];
 $summary = sisonke_fetch_seller_summary($pdo, $sellerId);
 $campaigns = sisonke_fetch_campaigns($pdo, '', 8, $sellerId);
+$hasActiveProduct = (int) ($summary['active_products_count'] ?? 0) > 0;
+$hasCampaign = (int) ($summary['campaigns_count'] ?? 0) > 0;
+$showSellerSetup = !$hasActiveProduct || !$hasCampaign;
 $pageTitle = sisonke_t('seller_dashboard_title');
 require_once dirname(__DIR__) . '/includes/header.php';
 ?>
@@ -43,9 +46,49 @@ require_once dirname(__DIR__) . '/includes/header.php';
         </div>
     </div>
 
+    <?php if ($showSellerSetup): ?>
+        <div class="st-card mb-4">
+            <div class="st-card-body">
+                <h2 class="st-card-title mb-3"><?= sisonke_e(sisonke_t('seller_setup_title')) ?></h2>
+                <ol class="st-seller-steps">
+                    <li class="st-seller-step<?= $hasActiveProduct ? ' is-complete' : ' is-current' ?>">
+                        <span class="st-seller-step-marker" aria-hidden="true"><?= $hasActiveProduct ? '&#10003;' : '1' ?></span>
+                        <div class="st-seller-step-body">
+                            <strong><?= sisonke_e(sisonke_t('seller_step_add_product')) ?></strong>
+                            <p class="st-meta mb-2"><?= sisonke_e(sisonke_t('seller_step_add_product_desc')) ?></p>
+                            <?php if (!$hasActiveProduct): ?>
+                                <a class="st-btn st-btn-yellow" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/seller/my_products.php"><?= sisonke_e(sisonke_t('add_product')) ?></a>
+                            <?php else: ?>
+                                <span class="st-badge st-badge-green"><?= sisonke_e(sisonke_t('seller_step_complete')) ?></span>
+                            <?php endif; ?>
+                        </div>
+                    </li>
+                    <li class="st-seller-step<?= $hasCampaign ? ' is-complete' : ($hasActiveProduct ? ' is-current' : ' is-locked') ?>">
+                        <span class="st-seller-step-marker" aria-hidden="true"><?= $hasCampaign ? '&#10003;' : '2' ?></span>
+                        <div class="st-seller-step-body">
+                            <strong><?= sisonke_e(sisonke_t('seller_step_launch_campaign')) ?></strong>
+                            <p class="st-meta mb-2"><?= sisonke_e(sisonke_t('seller_step_launch_campaign_desc')) ?></p>
+                            <?php if ($hasCampaign): ?>
+                                <span class="st-badge st-badge-green"><?= sisonke_e(sisonke_t('seller_step_complete')) ?></span>
+                            <?php elseif ($hasActiveProduct): ?>
+                                <a class="st-btn st-btn-yellow" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/seller/my_products.php?step=campaign"><?= sisonke_e(sisonke_t('create_campaign')) ?></a>
+                            <?php else: ?>
+                                <span class="st-badge st-badge-muted"><?= sisonke_e(sisonke_t('add_active_product')) ?></span>
+                            <?php endif; ?>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <div class="d-flex flex-column flex-md-row gap-2 mb-4">
         <a class="st-btn st-btn-yellow" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/seller/my_products.php"><?= sisonke_e(sisonke_t('manage_products')) ?></a>
-        <a class="st-btn" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/seller/create_campaign.php"><?= sisonke_e(sisonke_t('create_campaign')) ?></a>
+        <?php if ($hasActiveProduct): ?>
+            <a class="st-btn" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/seller/my_products.php?step=campaign"><?= sisonke_e(sisonke_t('create_campaign')) ?></a>
+        <?php else: ?>
+            <span class="st-btn st-btn-muted" title="<?= sisonke_e(sisonke_t('add_active_product')) ?>"><?= sisonke_e(sisonke_t('create_campaign')) ?></span>
+        <?php endif; ?>
     </div>
 
     <div class="st-card">

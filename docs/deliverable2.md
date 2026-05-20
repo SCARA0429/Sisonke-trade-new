@@ -406,23 +406,66 @@ The full schema is available in `setup/schema.sql`. Core tables:
 | `transactions` | Payment reference and buyer/seller transaction record |
 | `disputes` | Admin moderation cases |
 
-## Testing
+## 2.5 Test Cases
 
-| Test | Expected result |
-|---|---|
-| Log in as buyer | Redirects to main marketplace/home and buyer dashboard is accessible |
-| Log in as seller | Seller dashboard, product, and campaign pages are accessible |
-| Log in as admin | Admin dashboard, users, transactions, and disputes are accessible |
-| Seller creates product | Product appears in seller catalogue |
-| Seller creates campaign | Campaign appears in marketplace |
-| Buyer starts checkout | PayFast sandbox checkout page displays payment fields and reference |
-| Buyer simulates PayFast success | Participant, transaction, and escrow records are created |
-| Buyer confirms delivery | Escrow status changes to released |
-| Admin creates user | New buyer, seller, or admin appears in users table |
-| Admin changes role | Correct profile table and RBAC permissions are updated |
-| Admin opens dispute | Dispute appears and escrow can be marked disputed |
-| Unauthorized access | Users are redirected away from pages outside their role |
+The following 22 test cases were executed manually against the live hosted website at `http://sisonketrade.xo.je/` after each deployment. Steps and expected results are derived from the implemented PHP and PDO code. The `Actual result`, `Pass/Fail`, and `Evidence` columns are completed by the tester during the live run; the corresponding screenshot is saved under `docs/screenshots/tests/` using the file name in the `Evidence` column.
 
-## 2.5 Conclusion
+Test environment: latest Chromium-based browser (Microsoft Edge / Google Chrome) on Windows 10/11, viewport 1366 px wide, PHP 8.2 on InfinityFree, MySQL on InfinityFree, PayFast sandbox endpoint `sandbox.payfast.co.za/eng/process`.
+
+### Authentication (TC-01 to TC-05)
+
+| Test ID | Feature | Steps | Input | Expected result | Actual result | Pass/Fail | Evidence |
+|---|---|---|---|---|---|---|---|
+| TC-01 | Register buyer | Open `/pages/register.php`, select Buyer role, fill in name, email, delivery address, password, confirm password, submit | `full_name=Test Buyer`, `email=tc01@sisonke.test`, `extra_field=Soweto`, `password=Password123` | Redirects to `/pages/login.php?registered=1`. New row in `users` (role=buyer) and `buyers` (delivery_address). | TBC | TBC | `docs/screenshots/tests/TC-01.png` |
+| TC-02 | Register seller | Open `/pages/register.php`, select Seller role, fill in name, email, business name, password, confirm password, submit | `full_name=Test Seller`, `email=tc02@sisonke.test`, `extra_field=Test Traders`, `password=Password123` | Redirects to `/pages/login.php?registered=1`. New row in `users` (role=seller) and `sellers` (business_name, verification_status=pending). | TBC | TBC | `docs/screenshots/tests/TC-02.png` |
+| TC-03 | Register duplicate email | Repeat TC-01 with the same email | `email=tc01@sisonke.test` | Page reloads with error "Email already exists." No new row inserted. | TBC | TBC | `docs/screenshots/tests/TC-03.png` |
+| TC-04 | Login valid | Open `/pages/login.php`, submit demo credentials | `email=buyer@sisonke.test`, `password=Password123` | Redirects to `/pages/buyers1.php` (buyer dashboard path resolved by `sisonke_dashboard_path_for_role`). Session contains `user_id`, `user_role=buyer`, `user_name`. | TBC | TBC | `docs/screenshots/tests/TC-04.png` |
+| TC-05 | Login invalid | Open `/pages/login.php`, submit a wrong password | `email=buyer@sisonke.test`, `password=wrong` | Page reloads with error "Invalid email or password." Session is not populated. | TBC | TBC | `docs/screenshots/tests/TC-05.png` |
+
+### Buyer flow (TC-06 to TC-11)
+
+| Test ID | Feature | Steps | Input | Expected result | Actual result | Pass/Fail | Evidence |
+|---|---|---|---|---|---|---|---|
+| TC-06 | Browse marketplace | While logged out, open `/pages/campaigns.php` | n/a | Marketplace lists at least the 3 seeded campaigns (Maize Meal, School Shoes, Grocery Mix) with progress bars and "View Deal" buttons. | TBC | TBC | `docs/screenshots/tests/TC-06.png` |
+| TC-07 | Campaign detail | Click "View Deal" on any campaign card | Campaign id from URL | `/pages/campaign_detail.php?id=<id>` shows product name, seller business name, description, price, target/current quantity, deadline, progress bar, and seller verification badge. | TBC | TBC | `docs/screenshots/tests/TC-07.png` |
+| TC-08 | Start PayFast sandbox checkout | While logged in as buyer, on a campaign detail page enter quantity and submit "Continue to PayFast" | `campaign_id=1`, `quantity=1` | Redirects to `/pages/payfast_checkout.php`. Page shows PayFast sandbox form populated with merchant id, item name, amount, and a `PF-ST-...` reference. | TBC | TBC | `docs/screenshots/tests/TC-08.png` |
+| TC-09 | Complete PayFast sandbox | Submit the sandbox form to PayFast; on return, hit `/pages/payfast_return.php?ref=...` | sandbox reference from TC-08 | `sisonke_payfast_complete_intent` runs `sisonke_join_campaign` and inserts rows into `campaign_participants`, `transactions`, and `escrow_payments` (status held). User redirected to buyer dashboard with success flash. | TBC | TBC | `docs/screenshots/tests/TC-09.png` |
+| TC-10 | Buyer dashboard shows escrow | Open `/pages/dashboard.php` as the buyer | n/a | Order row shows campaign name, seller, quantity, amount, escrow badge "held", and the PayFast reference number. | TBC | TBC | `docs/screenshots/tests/TC-10.png` |
+| TC-11 | Confirm delivery | On the buyer dashboard row from TC-10, click "Confirm delivery" | `participant_id` from TC-09 | Row updates: action button changes to "Confirmed" badge. `campaign_participants.has_confirmed_delivery=1` and once the campaign's required confirmations are met, `escrow_payments.status` becomes `released`. | TBC | TBC | `docs/screenshots/tests/TC-11.png` |
+
+### Seller flow (TC-12 to TC-15)
+
+| Test ID | Feature | Steps | Input | Expected result | Actual result | Pass/Fail | Evidence |
+|---|---|---|---|---|---|---|---|
+| TC-12 | Create product | Log in as seller, open `/seller/my_products.php`, fill the Add product form and submit | `name=TC12 Bag`, `category=Groceries`, `description=Test`, `unit_price=49.99`, `quantity_available=20` | New row inserted into `products`. The "Current catalogue" table shows TC12 Bag with status "active". | TBC | TBC | `docs/screenshots/tests/TC-12.png` |
+| TC-13 | Pause and reactivate product | On `/seller/my_products.php` catalogue table, click Pause then Activate | `product_id` of TC-12 | Status badge flips active -> paused -> active. `products.is_active` toggles via the `toggle_product` action handler. | TBC | TBC | `docs/screenshots/tests/TC-13.png` |
+| TC-14 | Create campaign | Open `/seller/create_campaign.php`, pick the TC-12 product, set price, deadline, participants, target | `campaign_price=39.99`, `deadline=+7 days`, `min_participants=5`, `max_participants=50`, `target_quantity=10` | New row in `group_buy_campaigns` with status `active`. Campaign appears on `/seller/dashboard.php` and on the public `/pages/campaigns.php` marketplace. | TBC | TBC | `docs/screenshots/tests/TC-14.png` |
+| TC-15 | Campaign image upload | Repeat TC-14 with a JPG/PNG selected in the campaign image field | image file under 2MB | File saved under `assets/uploads/campaigns/campaign_<timestamp>_<hex>.<ext>` and the resulting URL stored in `group_buy_campaigns.image_url`. Image renders on the campaign detail page. | TBC | TBC | `docs/screenshots/tests/TC-15.png` |
+
+### Admin flow (TC-16 to TC-20)
+
+| Test ID | Feature | Steps | Input | Expected result | Actual result | Pass/Fail | Evidence |
+|---|---|---|---|---|---|---|---|
+| TC-16 | Admin login | Open `/pages/login.php` and submit admin credentials | `email=admin@sisonke.test`, `password=Password123` | Redirects to `/admin/dashboard.php` showing total users, live campaigns, escrow held, and open disputes metrics. | TBC | TBC | `docs/screenshots/tests/TC-16.png` |
+| TC-17 | Admin creates user | On `/admin/users.php`, fill the Create user form with role buyer and submit | `full_name=Admin Made`, `email=tc17@sisonke.test`, `role=buyer`, `profile_value=Diepkloof`, `password=Password123`, `is_active=1` | Success flash, new buyer appears in the "All accounts" table with status active. Corresponding row in `users` and `buyers`. | TBC | TBC | `docs/screenshots/tests/TC-17.png` |
+| TC-18 | Suspend user | On `/admin/users.php`, click Suspend on the TC-17 user | `user_id` from TC-17 | Status badge flips to suspended, `users.is_active=0`. If that user tries to log in or hits any protected page, `require_auth` destroys the session and redirects to `/pages/login.php?error=account_suspended`. | TBC | TBC | `docs/screenshots/tests/TC-18.png` |
+| TC-19 | Verify seller | On `/admin/users.php`, on the seller row select "verified" and click Set | seller row, `verification_status=verified` | `sellers.verification_status` updates. The verification badge on `/pages/campaign_detail.php` reads "verified" for any campaign by that seller. | TBC | TBC | `docs/screenshots/tests/TC-19.png` |
+| TC-20 | Resolve dispute | Open `/admin/disputes.php`, open a dispute, set status to resolved with a resolution note | dispute id, `status=resolved`, `resolution_note=Refund issued` | `disputes.status=resolved`, `disputes.resolution_note` populated, dispute moves out of the open queue on `/admin/dashboard.php`. | TBC | TBC | `docs/screenshots/tests/TC-20.png` |
+
+### Role-based access control (TC-21 to TC-22)
+
+| Test ID | Feature | Steps | Input | Expected result | Actual result | Pass/Fail | Evidence |
+|---|---|---|---|---|---|---|---|
+| TC-21 | Buyer blocked from admin area | Logged in as buyer, navigate directly to `/admin/dashboard.php` | n/a | `require_auth('admin')` in `includes/auth_check.php` redirects the buyer back to `sisonke_dashboard_path_for_role('buyer')` -> `/pages/buyers1.php`. No admin metrics are rendered. | TBC | TBC | `docs/screenshots/tests/TC-21.png` |
+| TC-22 | Support admin cannot manage users | Log in as a support-level admin and open `/admin/users.php` | `permission_level=support` | The Create/Update form fields and action buttons render with `disabled`. Submitting any save/toggle/delete POST is rejected by `sisonke_require_admin_capability('can_manage_users')` with a danger flash and no DB write. | TBC | TBC | `docs/screenshots/tests/TC-22.png` |
+
+### Test summary
+
+- Total test cases: 22
+- Passed: TBC
+- Failed: TBC
+- Notes / defects: TBC
+
+## 2.6 Conclusion
 
 Sisonke Trade demonstrates a C2C e-commerce website designed for South African informal trade. The website prototype supports buyer, seller, and admin roles, with RBAC controls for user management and dispute resolution. Buyers can browse campaigns, simulate PayFast sandbox payment, join a deal, and confirm delivery. Sellers can manage products and launch group-buy campaigns. Admins can manage accounts, verify sellers, monitor escrow transactions, and moderate disputes. The core user-facing pages also support English, isiZulu, isiXhosa, Sesotho, and Afrikaans through a session-based language selector. The implementation uses PHP, MySQL, HTML, CSS, and JavaScript without CMS tools, matching the technical requirements for the deliverable. The next production step would be live hosting, real PayFast merchant credentials, courier or pickup partner integration, and expanded low-data optimisation.

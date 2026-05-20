@@ -485,14 +485,18 @@ function sisonke_fetch_seller_summary(PDO $pdo, int $sellerId): array
     $stmt = $pdo->prepare(
         "SELECT
             (SELECT COUNT(*) FROM products WHERE seller_id = ?) AS products_count,
+            (SELECT COUNT(*) FROM products WHERE seller_id = ? AND is_active = 1) AS active_products_count,
+            (SELECT COUNT(*) FROM group_buy_campaigns WHERE seller_id = ?) AS campaigns_count,
             (SELECT COUNT(*) FROM group_buy_campaigns WHERE seller_id = ? AND status IN ('active','fulfilled')) AS active_campaigns,
             (SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE seller_id = ? AND status = 'completed') AS revenue,
             (SELECT COUNT(*) FROM disputes WHERE seller_id = ? AND status IN ('open','reviewing')) AS open_disputes"
     );
-    $stmt->execute([$sellerId, $sellerId, $sellerId, $sellerId]);
+    $stmt->execute([$sellerId, $sellerId, $sellerId, $sellerId, $sellerId, $sellerId]);
 
     return $stmt->fetch() ?: [
         'products_count' => 0,
+        'active_products_count' => 0,
+        'campaigns_count' => 0,
         'active_campaigns' => 0,
         'revenue' => 0,
         'open_disputes' => 0,
@@ -527,7 +531,42 @@ function sisonke_create_product(PDO $pdo, int $sellerId, array $data): array
     );
     $stmt->execute([$sellerId, $name, $description, $category, $price, $quantity, $imageUrl !== '' ? $imageUrl : null]);
 
-    return ['success' => true, 'message' => 'Product saved.'];
+    return [
+        'success' => true,
+        'message' => 'Product saved.',
+        'product_id' => (int) $pdo->lastInsertId(),
+    ];
+}
+
+function sisonke_campaign_form_state(PDO $pdo, int $sellerId, int $preselectProductId = 0): array
+{
+    $allProducts = sisonke_fetch_seller_products($pdo, $sellerId);
+    $products = array_values(array_filter(
+        $allProducts,
+        static fn (array $product): bool => (bool) $product['is_active']
+    ));
+    $productIds = array_map(static fn (array $product): int => (int) $product['product_id'], $products);
+
+    if ($preselectProductId <= 0 || !in_array($preselectProductId, $productIds, true)) {
+        $preselectProductId = $productIds[0] ?? 0;
+    }
+
+    $prefillCampaignPrice = '';
+    $selectedProduct = null;
+    foreach ($products as $product) {
+        if ((int) $product['product_id'] === $preselectProductId) {
+            $prefillCampaignPrice = number_format((float) $product['unit_price'], 2, '.', '');
+            $selectedProduct = $product;
+            break;
+        }
+    }
+
+    return [
+        'products' => $products,
+        'preselect_product_id' => $preselectProductId,
+        'prefill_campaign_price' => $prefillCampaignPrice,
+        'selected_product' => $selectedProduct,
+    ];
 }
 
 function sisonke_store_campaign_image(array $file): array
