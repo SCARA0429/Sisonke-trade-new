@@ -58,8 +58,9 @@ jobs:
           protocol: ftp
           port: 21
           log-level: verbose
-          state-name: .ftp-deploy-sync-state-v2.json
-          dangerous-clean-slate: true
+          state-name: .ftp-deploy-sync-state-v3.json
+          dangerous-clean-slate: false
+          timeout: 600000
           exclude: |
             **/.git*
             **/.git*/**
