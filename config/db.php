@@ -40,6 +40,42 @@ if (is_file($localConfig)) {
     require_once $localConfig;
 }
 
+if (!function_exists('sisonke_apply_mysql_url')) {
+    function sisonke_apply_mysql_url(string $url): void
+    {
+        $parts = parse_url($url);
+        if ($parts === false || empty($parts['host'])) {
+            return;
+        }
+
+        if (!defined('DB_HOST')) {
+            define('DB_HOST', $parts['host']);
+        }
+        if (!defined('DB_PORT')) {
+            define('DB_PORT', isset($parts['port']) ? (int) $parts['port'] : 3306);
+        }
+        if (!defined('DB_USER') && isset($parts['user'])) {
+            define('DB_USER', rawurldecode($parts['user']));
+        }
+        if (!defined('DB_PASS') && isset($parts['pass'])) {
+            define('DB_PASS', rawurldecode($parts['pass']));
+        }
+        if (!defined('DB_NAME') && !empty($parts['path'])) {
+            define('DB_NAME', ltrim($parts['path'], '/'));
+        }
+    }
+}
+
+if (!defined('DB_HOST')) {
+    foreach (['MYSQL_URL', 'DATABASE_URL'] as $urlVar) {
+        $mysqlUrl = getenv($urlVar);
+        if (is_string($mysqlUrl) && $mysqlUrl !== '') {
+            sisonke_apply_mysql_url($mysqlUrl);
+            break;
+        }
+    }
+}
+
 if (!defined('DB_HOST')) {
     $host = getenv('SISONKE_DB_HOST') ?: getenv('MYSQLHOST');
     define('DB_HOST', is_string($host) && $host !== '' ? $host : 'localhost');
