@@ -169,8 +169,9 @@ require_once dirname(__DIR__) . '/includes/header.php';
                             </div>
                         </div>
                         <div class="mt-3">
-                            <label class="st-label" for="image_url"><?= sisonke_e(sisonke_t('image_url')) ?></label>
+                            <label class="st-label" for="image_url"><?= sisonke_e(sisonke_t('product_image_label')) ?></label>
                             <input class="st-form-control" id="image_url" name="image_url" maxlength="255" placeholder="<?= sisonke_e(sisonke_t('image_url_placeholder')) ?>">
+                            <small class="st-meta"><?= sisonke_e(sisonke_t('product_image_marketplace_help')) ?></small>
                         </div>
                         <div class="d-flex flex-column gap-2 mt-3">
                             <button class="st-btn st-btn-yellow" type="submit" name="next_action" value="launch"><?= sisonke_e(sisonke_t('save_and_launch_campaign')) ?></button>

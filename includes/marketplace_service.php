@@ -579,8 +579,8 @@ function sisonke_store_campaign_image(array $file): array
         return ['success' => false, 'message' => 'Campaign image could not be uploaded. Please try again.'];
     }
 
-    if ((int) ($file['size'] ?? 0) > 2 * 1024 * 1024) {
-        return ['success' => false, 'message' => 'Campaign image must be 2MB or smaller.'];
+    if ((int) ($file['size'] ?? 0) > 5 * 1024 * 1024) {
+        return ['success' => false, 'message' => 'Campaign image must be 5MB or smaller.'];
     }
 
     $tmpName = (string) ($file['tmp_name'] ?? '');

@@ -13,6 +13,7 @@ $products = $campaignFormState['products'];
 $preselectProductId = (int) $campaignFormState['preselect_product_id'];
 $prefillCampaignPrice = (string) $campaignFormState['prefill_campaign_price'];
 $selectedProduct = $campaignFormState['selected_product'] ?? null;
+$productImageUrl = is_array($selectedProduct) ? trim((string) ($selectedProduct['image_url'] ?? '')) : '';
 
 if ($products === []): ?>
     <div class="st-empty">
@@ -23,7 +24,7 @@ if ($products === []): ?>
         </p>
     </div>
 <?php else: ?>
-    <form method="post" action="<?= sisonke_e($campaignFormAction) ?>" enctype="multipart/form-data">
+    <form method="post" action="<?= sisonke_e($campaignFormAction) ?>">
         <?php if (!empty($campaignHiddenAction)): ?>
             <input type="hidden" name="action" value="<?= sisonke_e((string) $campaignHiddenAction) ?>">
         <?php endif; ?>
@@ -37,6 +38,9 @@ if ($products === []): ?>
                     &middot;
                     <?= (int) $selectedProduct['quantity_available'] ?> <?= sisonke_e(sisonke_t('in_stock')) ?>
                 </span>
+                <?php if ($productImageUrl !== ''): ?>
+                    <img class="st-product-pick-image mt-2" src="<?= sisonke_e($productImageUrl) ?>" alt="">
+                <?php endif; ?>
             </div>
         <?php else: ?>
             <div class="mb-3">
@@ -74,16 +78,12 @@ if ($products === []): ?>
                 <input class="st-form-control" id="<?= sisonke_e($formIdPrefix) ?>target_quantity" type="number" name="target_quantity" min="1" value="25" required>
             </div>
         </div>
-        <div class="mt-3">
-            <label class="st-label" for="<?= sisonke_e($formIdPrefix) ?>campaign_image"><?= sisonke_e(sisonke_t('campaign_image')) ?></label>
-            <input class="st-form-control" id="<?= sisonke_e($formIdPrefix) ?>campaign_image" type="file" name="campaign_image" accept="image/jpeg,image/png,image/webp,image/gif">
-            <small class="st-meta"><?= sisonke_e(sisonke_t('campaign_image_upload_help')) ?></small>
-        </div>
-        <div class="mt-3">
-            <label class="st-label" for="<?= sisonke_e($formIdPrefix) ?>campaign_image_url"><?= sisonke_e(sisonke_t('campaign_image_url')) ?></label>
-            <input class="st-form-control" id="<?= sisonke_e($formIdPrefix) ?>campaign_image_url" type="url" name="campaign_image_url" maxlength="255" placeholder="<?= sisonke_e(sisonke_t('campaign_image_url_placeholder')) ?>">
-            <small class="st-meta"><?= sisonke_e(sisonke_t('campaign_image_url_help')) ?></small>
-        </div>
+        <p class="st-meta mb-0 mt-3">
+            <?= sisonke_e($productImageUrl !== '' ? sisonke_t('campaign_uses_product_image') : sisonke_t('campaign_uses_product_image_missing')) ?>
+            <?php if ($productImageUrl === ''): ?>
+                <a href="<?= sisonke_e(SISONKE_BASE_URL) ?>/seller/my_products.php"><?= sisonke_e(sisonke_t('go_to_products')) ?></a>
+            <?php endif; ?>
+        </p>
         <button class="st-btn st-btn-yellow mt-3" type="submit"><?= sisonke_e(sisonke_t('launch_campaign')) ?></button>
     </form>
 <?php endif; ?>
