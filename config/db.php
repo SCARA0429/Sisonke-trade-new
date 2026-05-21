@@ -41,20 +41,30 @@ if (is_file($localConfig)) {
 }
 
 if (!defined('DB_HOST')) {
-    define('DB_HOST', getenv('SISONKE_DB_HOST') ?: 'localhost');
+    $host = getenv('SISONKE_DB_HOST') ?: getenv('MYSQLHOST');
+    define('DB_HOST', is_string($host) && $host !== '' ? $host : 'localhost');
 }
 if (!defined('DB_USER')) {
-    define('DB_USER', getenv('SISONKE_DB_USER') ?: 'root');
+    $user = getenv('SISONKE_DB_USER') ?: getenv('MYSQLUSER');
+    define('DB_USER', is_string($user) && $user !== '' ? $user : 'root');
 }
 if (!defined('DB_PASS')) {
-    $dbPassEnv = getenv('SISONKE_DB_PASS');
-    define('DB_PASS', $dbPassEnv !== false ? $dbPassEnv : '');
+    $pass = getenv('SISONKE_DB_PASS');
+    if ($pass === false || $pass === '') {
+        $pass = getenv('MYSQLPASSWORD');
+    }
+    define('DB_PASS', $pass !== false ? $pass : '');
 }
 if (!defined('DB_NAME')) {
-    define('DB_NAME', getenv('SISONKE_DB_NAME') ?: 'sisonke_trade');
+    $name = getenv('SISONKE_DB_NAME') ?: getenv('MYSQLDATABASE');
+    define('DB_NAME', is_string($name) && $name !== '' ? $name : 'sisonke_trade');
+}
+if (!defined('DB_PORT')) {
+    $port = getenv('SISONKE_DB_PORT') ?: getenv('MYSQLPORT');
+    define('DB_PORT', $port !== false && $port !== '' ? (int) $port : 3306);
 }
 
-$dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
+$dsn = 'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME . ';charset=utf8mb4';
 
 $pdo = new PDO($dsn, DB_USER, DB_PASS, [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

@@ -1,0 +1,10 @@
+{
+  "name": "sisonke/trade",
+  "description": "Sisonke Trade C2C group-buying prototype",
+  "require": {
+    "php": ">=8.2",
+    "ext-pdo": "*",
+    "ext-pdo_mysql": "*",
+    "ext-mbstring": "*"
+  }
+}

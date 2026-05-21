@@ -1,0 +1,17 @@
+.git
+.github
+.gitignore
+*.md
+docs/
+tools/
+config/db.local.php
+config/db.local.example.php
+assets/uploads/*
+!assets/uploads/.gitkeep
+node_modules/
+vendor/
+*.log
+*.bak
+*.tmp
+.env
+.env.*

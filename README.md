@@ -11,10 +11,9 @@ transactions, and dispute resolution.
 
 ## Live demo
 
-- **URL:** <http://sisonketrade.xo.je/>
-- **Host:** InfinityFree (free PHP 8 + MySQL hosting)
-- **Deploy:** automated via GitHub Actions FTP on push to `main`
-  (`.github/workflows/deploy.yml`)
+- **URL:** your Railway domain, e.g. `https://sisonke-trade.up.railway.app`
+- **Host:** Railway (Railpack / FrankenPHP + MySQL)
+- **Deploy:** Railway auto-deploy on push to `main`; GitHub Actions runs PHP lint + Docker build
 
 ### Demo logins
 
@@ -32,11 +31,11 @@ transactions, and dispute resolution.
 | Database | MySQL / MariaDB (PDO with prepared statements) |
 | Frontend | HTML5, CSS3 (`assets/css/style.css`), vanilla JavaScript, Bootstrap 5 utility classes |
 | Local development | XAMPP (Apache + PHP + MariaDB) |
-| Live web server | Apache (InfinityFree) |
-| Live database | InfinityFree MySQL via phpMyAdmin |
+| Live web server | Railway (Railpack / FrankenPHP) |
+| Live database | Railway MySQL |
 | Payment sandbox | PayFast sandbox (`sandbox.payfast.co.za/eng/process`) |
 | Version control | Git + GitHub (this repository) |
-| CI / CD | GitHub Actions: PHP lint + FTP deploy to InfinityFree |
+| CI / CD | GitHub Actions lint + Docker build; Railway auto-deploy |
 
 ## Quick start (local development with XAMPP)
 
@@ -66,7 +65,11 @@ sisonke-trade/
   seller/       Seller portal (dashboard, my_products, create_campaign)
   setup/        schema.sql, infinityfree.sql, seed_demo.php
   tools/        Hosting/health diagnostics
-  .github/      GitHub Actions deploy workflow
+  docker/       Apache config, start script, DB init script
+  .github/      GitHub Actions CI workflow
+  Dockerfile    Optional local/CI image (Railway uses Railpack, not Docker)
+  railway.toml  Railway Railpack deploy config
+  composer.json PHP version + extensions for Railpack
 ```
 
 ## Documentation
@@ -75,9 +78,8 @@ sisonke-trade/
   report: introduction, prototyping table, CRC cards, EERD, context
   diagram, DFD, use case diagram, requirements comparison, code
   samples, schema notes, and the 22-row test case table (section 2.5).
-- [docs/deployment.md](docs/deployment.md) - InfinityFree setup, the
-  GitHub Secrets the workflow needs, the automated CI/CD flow, the
-  manual FTP fallback, and the post-deploy smoke test.
+- [docs/deployment.md](docs/deployment.md) - Railway setup (MySQL + Docker web
+  service), environment variables, trial/free usage tips, and smoke tests.
 - [docs/screenshots/README.md](docs/screenshots/README.md) - capture
   checklist for responsive, database, test-evidence, and user-manual
   screenshots, plus the file naming convention used in the report.
@@ -106,7 +108,7 @@ The final submission package contains:
 - This source repository (zipped, excluding `config/db.local.php` and
   `assets/uploads/`).
 - The PDF export of `docs/deliverable2.md`.
-- A current MySQL dump exported from InfinityFree phpMyAdmin.
+- A current MySQL dump exported from the live Railway MySQL instance.
 - The `docs/screenshots/` folder with all captured PNGs.
 - The cover sheet with student details, declaration, the live URL, and
   the demo logins above.

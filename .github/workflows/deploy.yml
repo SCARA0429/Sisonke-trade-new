@@ -1,14 +1,17 @@
-name: Deploy to InfinityFree
+name: CI
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 concurrency:
-  group: deploy-${{ github.ref }}
-  cancel-in-progress: false
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
@@ -36,46 +39,12 @@ jobs:
           done
           echo "Linted ${#files[@]} PHP files."
 
-  deploy:
-    name: FTP deploy to InfinityFree
-    needs: lint
+  docker-build:
+    name: Docker build smoke test
     runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: http://sisonketrade.xo.je/
-
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Deploy by FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ secrets.FTP_SERVER_DIR }}
-          protocol: ftp
-          port: 21
-          log-level: verbose
-          state-name: .ftp-deploy-sync-state-v3.json
-          dangerous-clean-slate: false
-          timeout: 600000
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.github/**
-            **/node_modules/**
-            **/vendor/**
-            config/db.local.php
-            config/db.local.example.php
-            setup/**
-            docs/**
-            tools/**
-            assets/uploads/**
-            .gitignore
-            README.md
-            *.md
-            *.log
-            *.bak
-            *.tmp
+      - name: Build image
+        run: docker build -t sisonke-trade:ci .

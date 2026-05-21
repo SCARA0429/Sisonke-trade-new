@@ -1,7 +1,7 @@
 # Deployment Guide
 
-Sisonke Trade is developed locally on XAMPP and deployed to InfinityFree.
-Public URL: <http://sisonketrade.xo.je/>
+Railpack auto-detects this repo as PHP (root `index.php` + `composer.json`).
+No Dockerfile is required on Railway.
 
 ## Tooling and environments
 
@@ -11,99 +11,136 @@ Public URL: <http://sisonketrade.xo.je/>
 | Backend language | PHP 8.x |
 | Frontend | HTML5, CSS3 (`assets/css/style.css`), vanilla JavaScript |
 | Local database | MariaDB / MySQL via XAMPP |
-| Live hosting platform | InfinityFree (free PHP + MySQL hosting) |
-| Live database | InfinityFree MySQL, administered through phpMyAdmin |
-| Domain | `sisonketrade.xo.je` (free InfinityFree subdomain) |
+| Live hosting platform | Railway (Railpack / FrankenPHP) |
+| Live database | Railway MySQL template |
+| TLS | Automatic HTTPS on `*.up.railway.app` |
 | Payment sandbox | PayFast sandbox (`sandbox.payfast.co.za/eng/process`) |
 | Version control | Git + GitHub |
-| CI/CD | GitHub Actions FTP deploy on push to `main` (`.github/workflows/deploy.yml`) |
+| CI | GitHub Actions PHP lint + Docker build (`.github/workflows/deploy.yml`) |
+| CD | Railway auto-deploy on push to `main` |
 
-## One-time setup on InfinityFree
+## Pricing note
 
-1. Create an InfinityFree account and add the domain
-   `sisonketrade.xo.je`.
-2. In the vPanel:
-   - Set the PHP version to **8.2** (or any 8.1+).
-   - Create a MySQL database (record the host, database name, username,
-     and password vPanel gives you).
-3. Open phpMyAdmin from vPanel and import
-   `setup/infinityfree.sql` into that database.
-4. Using the InfinityFree File Manager, upload a single configuration
-   file to `htdocs/config/db.local.php` based on
-   `config/db.local.example.php`, filling in the real credentials.
-   This file is gitignored and is never overwritten by the CI/CD job.
+Railway gives new accounts a **$5 trial credit** (about 30 days, no card
+required). After that, the free plan includes **$1/month** of usage — enough
+for light demos if you stop services when not needed. A small PHP + MySQL stack
+typically fits the trial; monitor usage in the Railway dashboard.
 
-## One-time setup on GitHub
+## One-time setup on Railway
 
-Add the following repository secrets under
-**Settings → Secrets and variables → Actions → New repository secret**:
+### 1. Create a project
 
-| Secret | Example value | Purpose |
+1. Sign up at [railway.com](https://railway.com) with GitHub.
+2. Click **New Project**.
+
+### 2. Add MySQL
+
+1. In the project canvas, click **+ New** (or press `Ctrl/Cmd + K`).
+2. Choose **Database → MySQL**.
+3. Wait until the MySQL service shows **Active**.
+4. Railway exposes these variables automatically:
+   `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`.
+
+### 3. Add the web service from GitHub
+
+1. Click **+ New → GitHub Repo**.
+2. Select **`SCARA0429/Sisonke-trade-new`** (or your fork).
+3. Set **Branch** to **`main`**.
+4. Railway detects `index.php` and `composer.json` and builds with **Railpack**
+   (FrankenPHP). Do **not** set a custom Dockerfile path in the dashboard —
+   `railway.toml` uses `builder = "RAILPACK"`.
+
+### 4. Connect MySQL to the web service
+
+1. Open the **web service** → **Variables**.
+2. Click **New Variable → Add Reference** and link the MySQL service variables,
+   **or** add them manually:
+
+   | Variable | Value |
+   |---|---|
+   | `MYSQLHOST` | `${{MySQL.MYSQLHOST}}` |
+   | `MYSQLPORT` | `${{MySQL.MYSQLPORT}}` |
+   | `MYSQLUSER` | `${{MySQL.MYSQLUSER}}` |
+   | `MYSQLPASSWORD` | `${{MySQL.MYSQLPASSWORD}}` |
+   | `MYSQLDATABASE` | `${{MySQL.MYSQLDATABASE}}` |
+
+   Replace `MySQL` with your MySQL service name if you renamed it.
+
+   `config/db.php` reads `MYSQL*` directly — no `SISONKE_DB_*` vars required
+   when using references.
+
+3. Add the public URL for PayFast callbacks:
+
+   | Variable | Value |
+   |---|---|
+   | `SISONKE_PUBLIC_URL` | `https://${{RAILWAY_PUBLIC_DOMAIN}}` |
+
+4. Deploy (or wait for the first build to finish).
+
+### 5. Generate a public URL
+
+1. Web service → **Settings → Networking**.
+2. Click **Generate Domain** (gives you `something.up.railway.app`).
+3. Redeploy if `SISONKE_PUBLIC_URL` was set before the domain existed.
+
+### 6. Load the database schema (one time)
+
+Open the web service **Shell** and run:
+
+```bash
+php setup/import_schema.php
+```
+
+Or, if the `mysql` client is available:
+
+```bash
+bash docker/init-db.sh
+```
+
+Confirm: visit `https://<your-domain>.up.railway.app/tools/hosting-check.php`.
+
+## Environment variables reference
+
+| Variable | Required | Purpose |
 |---|---|---|
-| `FTP_SERVER` | `ftpupload.net` | InfinityFree FTP host (shown in vPanel under "FTP Accounts") |
-| `FTP_USERNAME` | `if0_41954067` | InfinityFree FTP username |
-| `FTP_PASSWORD` | *your FTP password* | InfinityFree FTP password |
-| `FTP_SERVER_DIR` | `/htdocs/` | Remote directory to mirror into |
+| `MYSQLHOST` | Yes | Injected via MySQL service reference |
+| `MYSQLPORT` | Yes | Usually `3306` |
+| `MYSQLUSER` | Yes | MySQL user |
+| `MYSQLPASSWORD` | Yes | MySQL password |
+| `MYSQLDATABASE` | Yes | Database name (`railway` by default) |
+| `SISONKE_PUBLIC_URL` | Yes | `https://your-app.up.railway.app` (PayFast) |
+| `SISONKE_BASE_URL` | No | Leave empty at domain root |
+| `SISONKE_DB_*` | No | Optional overrides; `MYSQL*` takes precedence via shared names |
 
-Optionally create a GitHub `production` environment (Settings →
-Environments → New environment → `production`) so deploys show up on the
-environment timeline with the live URL.
+Local development continues to use `config/db.local.php` (gitignored).
 
 ## Automated deploy flow
 
-The workflow in `.github/workflows/deploy.yml` runs on every push to
-`main` and can also be triggered manually from the Actions tab
-(`workflow_dispatch`). It performs two jobs:
+1. **GitHub Actions** lints PHP and verifies the Docker image builds.
+2. **Railway** rebuilds and redeploys the web service on every push to `main`
+   when the repo is connected.
 
-1. **PHP syntax check (`lint`).** Installs PHP 8.2 and runs `php -l`
-   against every `.php` file in the repository. The deploy job is
-   skipped if any file fails to parse, so a broken commit never reaches
-   the live site.
-2. **FTP deploy (`deploy`).** Uses
-   [`SamKirkland/FTP-Deploy-Action`](https://github.com/SamKirkland/FTP-Deploy-Action)
-   to mirror the repository into `htdocs/` over plain FTP on port 21.
-   The action keeps a `.ftp-deploy-sync-state.json` checksum file on
-   the server so subsequent runs only upload files that changed.
+## PayFast on Railway
 
-The workflow excludes anything that should not be on the public web
-server:
+With `SISONKE_PUBLIC_URL=https://your-app.up.railway.app`, callbacks resolve to:
 
-- `.git*`, `.github/**`, `*.md`, `.gitignore`, log/temp/backup files
-- `node_modules/**`, `vendor/**`
-- `config/db.local.php` and `config/db.local.example.php` (so the
-  manually-uploaded credentials are never clobbered)
-- `setup/**` (raw SQL schema and seed scripts)
-- `docs/**` (internal documentation)
-- `tools/**` (hosting health probe and other admin scripts)
-- `assets/uploads/**` (user-uploaded campaign images)
-
-## Manual deploy fallback
-
-If GitHub Actions is unavailable, the same deploy can be done by hand:
-
-1. Pull `main` locally.
-2. Drag the contents of `sisonke-trade/` (excluding the folders listed
-   above) into `htdocs/` using the InfinityFree File Manager or any FTP
-   client (FileZilla, WinSCP) pointed at `FTP_SERVER:21` with the
-   InfinityFree credentials.
-3. If the schema changed, import the relevant SQL through phpMyAdmin.
+- Return: `.../pages/payfast_return.php`
+- Notify: `.../api/payfast_notify.php`
 
 ## Smoke test after a deploy
 
-1. Visit <http://sisonketrade.xo.je/> — should redirect to
-   `pages/buyers1.php` and render the buyer home page.
-2. Visit `/pages/campaigns.php` — should list seeded campaigns from the
-   live database.
-3. Sign in with the demo accounts in `docs/deliverable2.md` and confirm
-   the buyer, seller, and admin dashboards each load.
-4. Submit the PayFast sandbox checkout for one campaign and confirm the
-   reference number appears on the buyer dashboard.
+1. Visit `/` — redirects to `/pages/buyers1.php`.
+2. Visit `/pages/campaigns.php` — lists seeded campaigns.
+3. Log in with demo accounts from `docs/deliverable2.md`.
+4. Run a PayFast sandbox checkout.
+
+## Tips to stay within free/trial limits
+
+- Delete or stop services when not demoing.
+- Use one project with only MySQL + web service (no extras).
+- Watch **Usage** in the Railway dashboard.
 
 ## What is not yet automated
 
-- Database migrations (currently re-import `setup/infinityfree.sql`
-  manually through phpMyAdmin when the schema changes).
-- TLS certificate provisioning — InfinityFree free SSL can be enabled
-  from vPanel but is not part of the workflow.
-- Smoke / end-to-end tests — the lint job only checks PHP syntax, it
-  does not exercise the live site after deploy.
+- Database seed on first deploy (run `docker/init-db.sh` once manually).
+- Persistent uploads (Railway disk optional; images may reset on redeploy without a volume).
