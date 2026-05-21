@@ -57,7 +57,8 @@ jobs:
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
           protocol: ftp
           port: 21
-          log-level: minimal
+          log-level: verbose
+          state-name: .ftp-deploy-sync-state-v2.json
           dangerous-clean-slate: false
           exclude: |
             **/.git*
