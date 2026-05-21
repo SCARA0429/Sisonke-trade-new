@@ -1357,6 +1357,15 @@ body {
   background: #fffdf5;
 }
 
+.st-product-pick-image {
+  display: block;
+  max-width: 100%;
+  max-height: 140px;
+  width: auto;
+  border: 2px solid var(--st-black);
+  object-fit: cover;
+}
+
 tr.is-highlighted {
   background: #fff6cc;
   outline: 3px solid var(--st-yellow);
@@ -1876,5 +1885,248 @@ tr.is-highlighted {
 
   .auth-role-options {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   PHONE & SMALL-TABLET RESPONSIVE LAYER
+   Added 2026 to fix mobile layout issues on screens <= 768px.
+   Targets phone widths 320px - 480px and tablets 481px - 768px.
+   Desktop styles above are untouched.
+   ============================================================ */
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .st-grid-3,
+  .st-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .st-hero-band {
+    padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3vw, 1.5rem);
+  }
+
+  .buyer-hero {
+    min-height: auto;
+    padding: 4rem 0;
+  }
+
+  .buyer-hero h1 {
+    font-size: clamp(3rem, 11vw, 5.5rem);
+  }
+
+  .buyer-subline {
+    font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+  }
+
+  .buyer-button {
+    min-width: 0;
+    min-height: 4rem;
+    padding: 1rem 1.5rem;
+    font-size: 1.15rem;
+  }
+
+  .st-table-wrap {
+    position: relative;
+  }
+
+  .st-table-wrap::after {
+    content: "swipe \2192";
+    position: absolute;
+    top: 0.35rem;
+    right: 0.5rem;
+    padding: 0.15rem 0.45rem;
+    background: var(--st-yellow);
+    color: var(--st-ink);
+    font-family: "Space Grotesk", "Arial Black", system-ui, sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .st-grid-2,
+  .st-grid-3,
+  .st-grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .st-page {
+    padding: 1rem 0.85rem;
+  }
+
+  .st-hero-band {
+    padding: 1.5rem 1rem;
+  }
+
+  .st-title {
+    font-size: clamp(1.85rem, 8vw, 2.4rem);
+    line-height: 1.05;
+  }
+
+  .st-lede {
+    font-size: 1rem;
+  }
+
+  .st-card-title {
+    font-size: 1.15rem;
+  }
+
+  .st-card-body {
+    padding: 1rem;
+  }
+
+  .st-card,
+  .st-flow-progress,
+  .st-launch-banner,
+  .auth-panel {
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.18);
+  }
+
+  .st-flow-progress-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 0.5rem;
+    border-right: 0;
+    border-bottom: 3px solid var(--st-red);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .admin-sidebar a {
+    flex: 0 0 auto;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    border-bottom: 4px solid transparent;
+  }
+
+  .admin-sidebar a:hover,
+  .admin-sidebar a:focus,
+  .admin-sidebar .is-active {
+    border-left: 0;
+    border-bottom: 4px solid var(--st-red);
+    background: var(--st-yellow);
+  }
+
+  .admin-content {
+    padding: 1rem;
+  }
+
+  .st-metric {
+    padding: 0.9rem;
+  }
+
+  .st-metric-value {
+    font-size: clamp(1.6rem, 8vw, 2.4rem);
+  }
+
+  .buyer-hero {
+    min-height: auto;
+    padding: 2.5rem 0;
+  }
+
+  .buyer-hero h1 {
+    font-size: clamp(2.5rem, 11vw, 3.5rem);
+    line-height: 1;
+  }
+
+  .buyer-subline {
+    font-size: clamp(1.4rem, 5vw, 1.85rem);
+  }
+
+  .buyer-copy {
+    font-size: 1rem;
+  }
+
+  .buyer-button {
+    width: 100%;
+    min-width: 0;
+    min-height: 3.25rem;
+    padding: 0.85rem 1rem;
+    font-size: 1.05rem;
+    border-width: 0 5px 5px 0;
+  }
+
+  .buyer-shell {
+    width: min(100% - 1.5rem, 1184px);
+  }
+
+  .buyer-topbar {
+    padding: 0.75rem 1rem;
+  }
+
+  .auth-intro h1 {
+    font-size: clamp(2.25rem, 10vw, 3rem);
+  }
+
+  .auth-intro p {
+    font-size: 1rem;
+  }
+
+  .auth-panel {
+    padding: 1rem;
+  }
+
+  .auth-panel h2 {
+    font-size: 1.65rem;
+  }
+
+  .auth-page {
+    padding: 1.5rem 0.85rem;
+  }
+
+  .auth-field input,
+  .auth-field textarea,
+  .st-form-control,
+  .st-select,
+  .st-textarea {
+    font-size: 1rem;
+    padding: 0.7rem 0.75rem;
+  }
+
+  .sisonke-navbar .navbar-collapse {
+    padding: 0.5rem 0;
+  }
+
+  .sisonke-navbar .nav-link {
+    padding: 0.6rem 0;
+  }
+
+  .st-table-wrap table {
+    font-size: 0.88rem;
+  }
+
+  .buyer-language-switcher,
+  .sisonke-language-switcher {
+    width: auto;
+    flex-wrap: wrap;
+  }
+
+  .buyer-language-switcher a,
+  .sisonke-language-switcher a {
+    opacity: 1;
+    transform: none;
   }
 }
