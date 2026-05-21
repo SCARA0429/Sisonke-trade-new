@@ -59,7 +59,7 @@ jobs:
           port: 21
           log-level: verbose
           state-name: .ftp-deploy-sync-state-v2.json
-          dangerous-clean-slate: false
+          dangerous-clean-slate: true
           exclude: |
             **/.git*
             **/.git*/**
