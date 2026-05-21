@@ -1,3 +1,4 @@
+# Railway always prefers a root Dockerfile when present — keep Docker optional under docker/.
 [build]
 builder = "RAILPACK"
 

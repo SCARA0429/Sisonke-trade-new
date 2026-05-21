@@ -65,9 +65,8 @@ sisonke-trade/
   seller/       Seller portal (dashboard, my_products, create_campaign)
   setup/        schema.sql, infinityfree.sql, seed_demo.php
   tools/        Hosting/health diagnostics
-  docker/       Apache config, start script, DB init script
+  docker/       Optional local Docker image + DB init scripts
   .github/      GitHub Actions CI workflow
-  Dockerfile    Optional local/CI image (Railway uses Railpack, not Docker)
   railway.toml  Railway Railpack deploy config
   composer.json PHP version + extensions for Railpack
 ```
