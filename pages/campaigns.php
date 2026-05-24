@@ -36,15 +36,10 @@ require_once dirname(__DIR__) . '/includes/header.php';
     <?php else: ?>
         <div class="st-grid st-grid-3">
             <?php foreach ($campaigns as $campaign): ?>
-                <?php $visual = sisonke_campaign_visual_key($campaign); ?>
                 <?php $progress = sisonke_campaign_progress($campaign); ?>
                 <article class="st-card">
                     <div class="st-product-media">
-                        <?php if (!empty($campaign['image_url'])): ?>
-                            <img src="<?= sisonke_e($campaign['image_url']) ?>" alt="">
-                        <?php else: ?>
-                            <span class="st-<?= sisonke_e($visual) ?>-glyph" aria-hidden="true"></span>
-                        <?php endif; ?>
+                        <img src="<?= sisonke_e(sisonke_campaign_image_url($campaign)) ?>" alt="<?= sisonke_e($campaign['product_name']) ?>" loading="lazy">
                     </div>
                     <div class="st-card-body">
                         <div class="d-flex justify-content-between gap-2 align-items-start mb-2">

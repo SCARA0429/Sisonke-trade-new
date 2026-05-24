@@ -17,7 +17,7 @@ $campaigns = array_map(static function (array $campaign): array {
         'title' => (string) $campaign['product_name'],
         'description' => sisonke_content_t($campaign['description']),
         'price' => sisonke_money($campaign['campaign_price']),
-        'visual' => sisonke_campaign_visual_key($campaign),
+        'image' => sisonke_campaign_image_url($campaign),
         'href' => SISONKE_BASE_URL . '/pages/campaign_detail.php?id=' . (int) $campaign['campaign_id'],
     ];
 }, $dbCampaigns);
@@ -29,7 +29,7 @@ if ($campaigns === []) {
         'title' => '10KG Maize Meal',
         'description' => sisonke_content_t('Premium white maize. Minimum order 20 units for bulk pricing.'),
         'price' => 'R89.99',
-        'visual' => 'maize',
+        'image' => sisonke_default_product_image_url('maize'),
         'href' => SISONKE_BASE_URL . '/pages/campaigns.php',
     ],
     [
@@ -37,7 +37,7 @@ if ($campaigns === []) {
         'title' => 'School Shoes',
         'description' => sisonke_content_t('Durable leather school shoes. Sized for primary learners.'),
         'price' => 'R249.99',
-        'visual' => 'shoes',
+        'image' => sisonke_default_product_image_url('shoes'),
         'href' => SISONKE_BASE_URL . '/pages/campaigns.php',
     ],
     [
@@ -45,7 +45,7 @@ if ($campaigns === []) {
         'title' => 'Grocery Mix',
         'description' => sisonke_content_t('Essential pantry pack: Oil, Sugar, Tea, Beans, Rice.'),
         'price' => 'R329.99',
-        'visual' => 'grocery',
+        'image' => sisonke_default_product_image_url('grocery'),
         'href' => SISONKE_BASE_URL . '/pages/campaigns.php',
     ],
     ];
@@ -167,9 +167,9 @@ $reasons = [
                 <div class="buyer-card-grid">
                     <?php foreach ($campaigns as $campaign): ?>
                         <article class="buyer-card">
-                            <div class="buyer-card-media buyer-visual-<?= htmlspecialchars($campaign['visual'], ENT_QUOTES, 'UTF-8') ?>">
+                            <div class="buyer-card-media">
                                 <span><?= htmlspecialchars($campaign['tag'], ENT_QUOTES, 'UTF-8') ?></span>
-                                <div aria-hidden="true"></div>
+                                <img src="<?= htmlspecialchars($campaign['image'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($campaign['title'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
                             </div>
                             <div class="buyer-card-body">
                                 <h3><?= htmlspecialchars($campaign['title'], ENT_QUOTES, 'UTF-8') ?></h3>

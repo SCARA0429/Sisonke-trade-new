@@ -94,7 +94,8 @@ $maizeId = seed_product(
     'Premium white maize meal for household and spaza shop bulk buying.',
     'Groceries',
     105.00,
-    180
+    180,
+    sisonke_default_product_image_url('maize')
 );
 $shoesId = seed_product(
     $pdo,
@@ -103,7 +104,8 @@ $shoesId = seed_product(
     'Durable black school shoes for primary learners and uniform resellers.',
     'School goods',
     165.00,
-    80
+    80,
+    sisonke_default_product_image_url('shoes')
 );
 $groceryId = seed_product(
     $pdo,
@@ -112,7 +114,8 @@ $groceryId = seed_product(
     'Community pantry pack with oil, sugar, tea, beans, rice, and soap.',
     'Household essentials',
     520.00,
-    45
+    45,
+    sisonke_default_product_image_url('grocery')
 );
 
 $deadline = date('Y-m-d H:i:s', strtotime('+21 days'));

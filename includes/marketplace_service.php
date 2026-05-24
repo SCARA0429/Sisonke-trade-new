@@ -172,6 +172,36 @@ function sisonke_campaign_visual_key(array $campaign): string
     return 'maize';
 }
 
+/**
+ * Returns a real photo URL to display when a product or campaign has no
+ * seller-uploaded image. Photos are public Unsplash images served from
+ * Unsplash's CDN; sellers can always override by uploading their own.
+ */
+function sisonke_default_product_image_url(string $visualKey): string
+{
+    $defaults = [
+        'maize' => 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=800&q=80&auto=format&fit=crop',
+        'shoes' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80&auto=format&fit=crop',
+        'grocery' => 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80&auto=format&fit=crop',
+    ];
+
+    return $defaults[$visualKey] ?? $defaults['grocery'];
+}
+
+/**
+ * Returns the best image URL for a campaign: the seller-uploaded one if
+ * present, otherwise a real fallback photo based on the campaign category.
+ */
+function sisonke_campaign_image_url(array $campaign): string
+{
+    $uploaded = trim((string) ($campaign['image_url'] ?? ''));
+    if ($uploaded !== '') {
+        return $uploaded;
+    }
+
+    return sisonke_default_product_image_url(sisonke_campaign_visual_key($campaign));
+}
+
 function sisonke_campaign_progress(array $campaign): int
 {
     $target = max(1, (int) ($campaign['target_quantity'] ?? 1));

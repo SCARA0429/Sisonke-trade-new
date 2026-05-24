@@ -22,7 +22,6 @@ if (!$campaign) {
 
 $pageTitle = $campaign['product_name'];
 $progress = sisonke_campaign_progress($campaign);
-$visual = sisonke_campaign_visual_key($campaign);
 require_once dirname(__DIR__) . '/includes/header.php';
 ?>
 <section class="st-hero-band">
@@ -39,11 +38,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
     <div class="st-grid st-grid-2">
         <article class="st-card">
             <div class="st-product-media">
-                <?php if (!empty($campaign['image_url'])): ?>
-                    <img src="<?= sisonke_e($campaign['image_url']) ?>" alt="">
-                <?php else: ?>
-                    <span class="st-<?= sisonke_e($visual) ?>-glyph" aria-hidden="true"></span>
-                <?php endif; ?>
+                <img src="<?= sisonke_e(sisonke_campaign_image_url($campaign)) ?>" alt="<?= sisonke_e($campaign['product_name']) ?>" loading="lazy">
             </div>
             <div class="st-card-body">
                 <div class="d-flex flex-wrap gap-2 mb-3">
