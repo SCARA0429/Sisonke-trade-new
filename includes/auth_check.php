@@ -28,9 +28,11 @@ function require_auth(?string $requiredRole = null): void
         exit;
     }
 
-    if ($requiredRole !== null && ($_SESSION['user_role'] ?? '') !== $requiredRole) {
-        $role = (string) ($_SESSION['user_role'] ?? 'buyer');
-        header('Location: ' . sisonke_dashboard_path_for_role($role));
-        exit;
+    if ($requiredRole !== null) {
+        $currentRole = (string) ($_SESSION['user_role'] ?? '');
+        if (!sisonke_role_can_act_as($currentRole, $requiredRole)) {
+            header('Location: ' . sisonke_dashboard_path_for_role($currentRole));
+            exit;
+        }
     }
 }

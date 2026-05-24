@@ -27,8 +27,13 @@ $statements = preg_split('/;\s*\n/', $sql) ?: [];
 $ran = 0;
 
 foreach ($statements as $statement) {
-    $statement = trim($statement);
-    if ($statement === '' || str_starts_with($statement, '--')) {
+    $lines = preg_split('/\R/', trim($statement)) ?: [];
+    $lines = array_values(array_filter(
+        $lines,
+        static fn (string $line): bool => !preg_match('/^\s*--/', $line)
+    ));
+    $statement = trim(implode("\n", $lines));
+    if ($statement === '') {
         continue;
     }
 

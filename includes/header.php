@@ -27,10 +27,10 @@ $navLinks = [
     ['label' => sisonke_t('nav_marketplace'), 'href' => $baseHref . '/pages/campaigns.php'],
 ];
 
-if ($role === 'buyer') {
+if (sisonke_role_can_act_as($role, 'buyer')) {
     $navLinks[] = ['label' => sisonke_t('nav_my_orders'), 'href' => $baseHref . '/pages/dashboard.php'];
 }
-if ($role === 'seller') {
+if (sisonke_role_can_act_as($role, 'seller')) {
     $navLinks[] = ['label' => sisonke_t('nav_seller'), 'href' => $baseHref . '/seller/dashboard.php'];
     $navLinks[] = ['label' => sisonke_t('nav_products'), 'href' => $baseHref . '/seller/my_products.php'];
 }

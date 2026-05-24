@@ -14,8 +14,27 @@ function sisonke_dashboard_path_for_role(string $role): string
     return match ($role) {
         'admin' => SISONKE_BASE_URL . '/admin/dashboard.php',
         'seller' => SISONKE_BASE_URL . '/seller/dashboard.php',
-        'buyer' => SISONKE_BASE_URL . '/pages/buyers1.php',
+        'buyer', 'user' => SISONKE_BASE_URL . '/pages/buyers1.php',
         default => SISONKE_BASE_URL . '/pages/login.php',
+    };
+}
+
+/**
+ * True if the given role can both buy and sell from a single account.
+ * 'user' is the unified C2C role created by the public registration form.
+ * Legacy 'buyer' and 'seller' roles remain for demo accounts and existing
+ * data, but only 'user' has both profile rows.
+ */
+function sisonke_role_can_act_as(string $role, string $capability): bool
+{
+    $role = strtolower(trim($role));
+    $capability = strtolower(trim($capability));
+
+    return match ($capability) {
+        'buyer' => in_array($role, ['user', 'buyer'], true),
+        'seller' => in_array($role, ['user', 'seller'], true),
+        'admin' => $role === 'admin',
+        default => false,
     };
 }
 
@@ -23,18 +42,10 @@ function sisonke_register_user(
     PDO $pdo,
     string $email,
     string $password,
-    string $fullName,
-    string $role,
-    string $extraField
+    string $fullName
 ): array {
-    $role = strtolower(trim($role));
-    if (!in_array($role, ['buyer', 'seller'], true)) {
-        return ['success' => false, 'message' => 'Role must be buyer or seller.'];
-    }
-
     $email = sisonke_normalize_email($email);
     $fullName = trim($fullName);
-    $extraField = trim($extraField);
 
     if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return ['success' => false, 'message' => 'Please enter a valid email address.'];
@@ -44,26 +55,11 @@ function sisonke_register_user(
         return ['success' => false, 'message' => 'Please enter your name (max 120 characters).'];
     }
 
-    if ($extraField === '') {
-        return [
-            'success' => false,
-            'message' => $role === 'seller'
-                ? 'Business name is required.'
-                : 'Delivery address is required.',
-        ];
-    }
-
-    if ($role === 'seller' && strlen($extraField) > 100) {
-        return ['success' => false, 'message' => 'Business name must be 100 characters or fewer.'];
-    }
-
-    if ($role === 'buyer' && strlen($extraField) > 255) {
-        return ['success' => false, 'message' => 'Delivery address must be 255 characters or fewer.'];
-    }
-
     if (strlen($password) < 6) {
         return ['success' => false, 'message' => 'Password must be at least 6 characters.'];
     }
+
+    $defaultBusinessName = substr($fullName, 0, 100);
 
     try {
         $stmt = $pdo->prepare('SELECT user_id FROM users WHERE email = ?');
@@ -77,22 +73,20 @@ function sisonke_register_user(
         $pdo->beginTransaction();
 
         $stmtUser = $pdo->prepare(
-            'INSERT INTO users (email, password_hash, full_name, role) VALUES (?, ?, ?, ?)'
+            "INSERT INTO users (email, password_hash, full_name, role) VALUES (?, ?, ?, 'user')"
         );
-        $stmtUser->execute([$email, $passwordHash, $fullName, $role]);
+        $stmtUser->execute([$email, $passwordHash, $fullName]);
         $newUserId = (int) $pdo->lastInsertId();
 
-        if ($role === 'seller') {
-            $stmtSub = $pdo->prepare(
-                'INSERT INTO sellers (seller_id, business_name) VALUES (?, ?)'
-            );
-            $stmtSub->execute([$newUserId, $extraField]);
-        } else {
-            $stmtSub = $pdo->prepare(
-                'INSERT INTO buyers (buyer_id, delivery_address) VALUES (?, ?)'
-            );
-            $stmtSub->execute([$newUserId, $extraField]);
-        }
+        $stmtBuyer = $pdo->prepare(
+            'INSERT INTO buyers (buyer_id, delivery_address) VALUES (?, ?)'
+        );
+        $stmtBuyer->execute([$newUserId, '']);
+
+        $stmtSeller = $pdo->prepare(
+            'INSERT INTO sellers (seller_id, business_name) VALUES (?, ?)'
+        );
+        $stmtSeller->execute([$newUserId, $defaultBusinessName]);
 
         $pdo->commit();
 

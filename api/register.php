@@ -19,8 +19,6 @@ try {
     $fullName = '';
     $email = '';
     $password = '';
-    $role = '';
-    $extraField = '';
 
     $contentType = $_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? '';
 
@@ -32,19 +30,15 @@ try {
             $emailCandidate = filter_var(trim((string) ($data['email'] ?? '')), FILTER_VALIDATE_EMAIL);
             $email = $emailCandidate !== false ? $emailCandidate : '';
             $password = (string) ($data['password'] ?? '');
-            $role = (string) ($data['role'] ?? '');
-            $extraField = trim((string) ($data['extra_field'] ?? $data['delivery_address'] ?? $data['business_name'] ?? ''));
         }
     } else {
         $fullName = trim((string) ($_POST['full_name'] ?? ''));
         $emailCandidate = filter_var(trim((string) ($_POST['email'] ?? '')), FILTER_VALIDATE_EMAIL);
         $email = $emailCandidate !== false ? $emailCandidate : '';
         $password = (string) ($_POST['password'] ?? '');
-        $role = (string) ($_POST['role'] ?? '');
-        $extraField = trim((string) ($_POST['extra_field'] ?? ''));
     }
 
-    $result = sisonke_register_user($pdo, $email, $password, $fullName, $role, $extraField);
+    $result = sisonke_register_user($pdo, $email, $password, $fullName);
 
     if (!$result['success']) {
         http_response_code(400);
