@@ -35,5 +35,11 @@ if (sisonke_payfast_simulation_allowed() && $paymentStatus === 'COMPLETE') {
     sisonke_redirect(SISONKE_BASE_URL . '/pages/dashboard.php');
 }
 
+if (sisonke_payfast_return_completion_allowed() && ($paymentStatus === '' || $paymentStatus === 'COMPLETE')) {
+    $result = sisonke_payfast_complete_intent($pdo, $reference);
+    sisonke_flash($result['success'] ? 'success' : 'danger', $result['message']);
+    sisonke_redirect(SISONKE_BASE_URL . '/pages/dashboard.php');
+}
+
 sisonke_flash('warning', sisonke_t('payfast_payment_pending'));
 sisonke_redirect(SISONKE_BASE_URL . '/pages/dashboard.php');

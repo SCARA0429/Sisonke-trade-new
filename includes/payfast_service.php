@@ -65,6 +65,16 @@ function sisonke_payfast_simulation_allowed(): bool
     return sisonke_payfast_is_sandbox() && sisonke_payfast_uses_local_urls();
 }
 
+function sisonke_payfast_return_completion_allowed(): bool
+{
+    $configured = getenv('SISONKE_PAYFAST_RETURN_COMPLETES');
+    if (is_string($configured) && $configured !== '') {
+        return in_array(strtolower(trim($configured)), ['1', 'true', 'yes', 'on'], true);
+    }
+
+    return sisonke_payfast_is_sandbox();
+}
+
 function sisonke_payfast_validate_url(): string
 {
     return sisonke_payfast_is_sandbox()

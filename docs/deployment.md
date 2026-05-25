@@ -124,6 +124,7 @@ Confirm: visit `https://<your-domain>.up.railway.app/tools/hosting-check.php`.
 | `SISONKE_PAYFAST_MERCHANT_ID` | Live only | From your PayFast merchant account |
 | `SISONKE_PAYFAST_MERCHANT_KEY` | Live only | From your PayFast merchant account |
 | `SISONKE_PAYFAST_PASSPHRASE` | Live only | PayFast security passphrase (required for live ITN verification) |
+| `SISONKE_PAYFAST_RETURN_COMPLETES` | No | Optional `true` to complete an order when the buyer returns from PayFast; sandbox enables this by default |
 | `SISONKE_BASE_URL` | No | Leave empty at domain root |
 | `SISONKE_DB_*` | No | Optional overrides; `MYSQL*` takes precedence via shared names |
 
@@ -141,6 +142,8 @@ With `SISONKE_PUBLIC_URL=https://your-app.up.railway.app`, callbacks resolve to:
 
 - Return: `.../pages/payfast_return.php`
 - Notify: `.../api/payfast_notify.php`
+
+Sandbox checkouts create the order when PayFast sends the buyer back to the return URL, so the buyer dashboard shows the new row immediately. Live PayFast payments should normally complete through the verified notify/ITN callback; only set `SISONKE_PAYFAST_RETURN_COMPLETES=true` for demo-style live testing where immediate dashboard feedback is more important than waiting for ITN.
 
 ## Smoke test after a deploy
 
