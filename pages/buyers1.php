@@ -4,11 +4,23 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/marketplace_service.php';
 require_once dirname(__DIR__) . '/includes/i18n.php';
+require_once dirname(__DIR__) . '/includes/auth_service.php';
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 
 $assetBase = htmlspecialchars(str_replace(' ', '%20', SISONKE_BASE_URL), ENT_QUOTES, 'UTF-8');
 $cssVersion = filemtime(dirname(__DIR__) . '/assets/css/style.css') ?: time();
 $currentLanguage = sisonke_current_language();
 $languageOptions = sisonke_supported_languages();
+$role = (string) ($_SESSION['user_role'] ?? 'guest');
+$userName = trim((string) ($_SESSION['user_name'] ?? ''));
+$isLoggedIn = !empty($_SESSION['user_id']);
+$canBuy = sisonke_role_can_act_as($role, 'buyer');
+$canSell = sisonke_role_can_act_as($role, 'seller');
+$primaryCtaHref = $isLoggedIn ? SISONKE_BASE_URL . '/pages/campaigns.php' : SISONKE_BASE_URL . '/pages/register.php';
+$primaryCtaLabel = $isLoggedIn ? sisonke_t('home_view_all') : sisonke_t('home_start_buying');
 
 $dbCampaigns = sisonke_fetch_campaigns($pdo, '', 3);
 $campaigns = array_map(static function (array $campaign): array {
@@ -55,6 +67,12 @@ $reasons = [
             <a class="is-active" href="<?= $assetBase ?>/pages/buyers1.php"><?= htmlspecialchars(sisonke_t('home_nav_home'), ENT_QUOTES, 'UTF-8') ?></a>
             <a href="<?= $assetBase ?>/pages/campaigns.php"><?= htmlspecialchars(sisonke_t('home_nav_shop'), ENT_QUOTES, 'UTF-8') ?></a>
             <a href="#deals"><?= htmlspecialchars(sisonke_t('home_nav_deals'), ENT_QUOTES, 'UTF-8') ?></a>
+            <?php if ($canBuy): ?>
+                <a href="<?= $assetBase ?>/pages/dashboard.php"><?= htmlspecialchars(sisonke_t('nav_my_orders'), ENT_QUOTES, 'UTF-8') ?></a>
+            <?php endif; ?>
+            <?php if ($canSell): ?>
+                <a href="<?= $assetBase ?>/seller/dashboard.php"><?= htmlspecialchars(sisonke_t('nav_seller'), ENT_QUOTES, 'UTF-8') ?></a>
+            <?php endif; ?>
         </nav>
         <div class="buyer-actions">
             <div class="buyer-language-switcher" aria-label="<?= htmlspecialchars(sisonke_t('language_selector_label'), ENT_QUOTES, 'UTF-8') ?>">
@@ -85,6 +103,14 @@ $reasons = [
                     <path d="M12 12a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9Zm0-2a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm8 11h-2v-1.5c0-2.1-2.74-3.5-6-3.5s-6 1.4-6 3.5V21H4v-1.5c0-3.35 3.58-5.5 8-5.5s8 2.15 8 5.5V21Z" />
                 </svg>
             </a>
+            <?php if ($isLoggedIn): ?>
+                <span class="buyer-user-pill"><?= htmlspecialchars($userName !== '' ? $userName : ucfirst($role), ENT_QUOTES, 'UTF-8') ?></span>
+                <form method="post" action="<?= $assetBase ?>/api/logout.php" class="buyer-logout-form">
+                    <button type="submit"><?= htmlspecialchars(sisonke_t('nav_logout'), ENT_QUOTES, 'UTF-8') ?></button>
+                </form>
+            <?php else: ?>
+                <a class="buyer-login-link" href="<?= $assetBase ?>/pages/login.php"><?= htmlspecialchars(sisonke_t('nav_login'), ENT_QUOTES, 'UTF-8') ?></a>
+            <?php endif; ?>
         </div>
     </header>
 
@@ -99,7 +125,7 @@ $reasons = [
                         <p class="buyer-subline"><?= htmlspecialchars(sisonke_t('home_save'), ENT_QUOTES, 'UTF-8') ?> <span><?= htmlspecialchars(sisonke_t('home_together'), ENT_QUOTES, 'UTF-8') ?></span></p>
                         <p class="buyer-copy"><?= htmlspecialchars(sisonke_t('home_copy'), ENT_QUOTES, 'UTF-8') ?></p>
                     </div>
-                    <a class="buyer-button" href="<?= $assetBase ?>/pages/register.php"><?= htmlspecialchars(sisonke_t('home_start_buying'), ENT_QUOTES, 'UTF-8') ?></a>
+                    <a class="buyer-button" href="<?= htmlspecialchars(str_replace(' ', '%20', $primaryCtaHref), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($primaryCtaLabel, ENT_QUOTES, 'UTF-8') ?></a>
                 </div>
             </div>
         </section>

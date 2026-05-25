@@ -197,6 +197,53 @@ body {
   gap: 16px;
 }
 
+.buyer-user-pill,
+.buyer-login-link,
+.buyer-logout-form button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  border: 2px solid var(--buyer-yellow);
+  background: var(--buyer-yellow);
+  color: var(--buyer-red);
+  font-family: "Space Grotesk", "Inter", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.buyer-user-pill {
+  max-width: 12rem;
+  padding: 0 0.75rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.buyer-login-link,
+.buyer-logout-form button {
+  padding: 0 0.9rem;
+  cursor: pointer;
+}
+
+.buyer-logout-form {
+  margin: 0;
+}
+
+.buyer-logout-form button {
+  border-color: #111;
+}
+
+.buyer-login-link:hover,
+.buyer-login-link:focus,
+.buyer-logout-form button:hover,
+.buyer-logout-form button:focus {
+  background: #fff;
+  color: var(--buyer-red);
+}
+
 .buyer-language-switcher,
 .sisonke-language-switcher {
   display: inline-flex;
