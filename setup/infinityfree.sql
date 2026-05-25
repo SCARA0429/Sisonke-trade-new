@@ -199,20 +199,23 @@ VALUES (@buyer_id, '321 Vilakazi Street, Soweto', 0, 0)
 ON DUPLICATE KEY UPDATE
   delivery_address = VALUES(delivery_address);
 
+-- image_url is left NULL on purpose: sisonke_campaign_image_url() in
+-- includes/marketplace_service.php returns the bundled fallback photo
+-- from /assets/images/products/* whenever a row has no uploaded image.
 INSERT INTO products (seller_id, name, description, category, unit_price, quantity_available, image_url, is_active)
-SELECT @seller_id, '10KG Maize Meal', 'Premium white maize meal for household and spaza shop bulk buying.', 'Groceries', 105.00, 180, 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=800&q=80&auto=format&fit=crop', 1
+SELECT @seller_id, '10KG Maize Meal', 'Premium white maize meal for household and spaza shop bulk buying.', 'Groceries', 105.00, 180, NULL, 1
 WHERE NOT EXISTS (
   SELECT 1 FROM products WHERE seller_id = @seller_id AND name = '10KG Maize Meal'
 );
 
 INSERT INTO products (seller_id, name, description, category, unit_price, quantity_available, image_url, is_active)
-SELECT @seller_id, 'School Shoes', 'Durable black school shoes for primary learners and uniform resellers.', 'School goods', 165.00, 80, 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80&auto=format&fit=crop', 1
+SELECT @seller_id, 'School Shoes', 'Durable black school shoes for primary learners and uniform resellers.', 'School goods', 165.00, 80, NULL, 1
 WHERE NOT EXISTS (
   SELECT 1 FROM products WHERE seller_id = @seller_id AND name = 'School Shoes'
 );
 
 INSERT INTO products (seller_id, name, description, category, unit_price, quantity_available, image_url, is_active)
-SELECT @seller_id, 'Grocery Mix', 'Community pantry pack with oil, sugar, tea, beans, rice, and soap.', 'Household essentials', 520.00, 45, 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80&auto=format&fit=crop', 1
+SELECT @seller_id, 'Grocery Mix', 'Community pantry pack with oil, sugar, tea, beans, rice, and soap.', 'Household essentials', 520.00, 45, NULL, 1
 WHERE NOT EXISTS (
   SELECT 1 FROM products WHERE seller_id = @seller_id AND name = 'Grocery Mix'
 );

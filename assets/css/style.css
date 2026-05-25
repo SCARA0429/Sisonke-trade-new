@@ -345,13 +345,7 @@ body {
   display: flex;
   align-items: center;
   padding: 8.5rem 0;
-  background:
-    linear-gradient(90deg,
-      rgba(253, 245, 222, 0.95) 0%,
-      rgba(253, 245, 222, 0.78) 45%,
-      rgba(253, 245, 222, 0.45) 100%),
-    url("https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1800&q=80&auto=format&fit=crop")
-      center/cover no-repeat;
+  background: #fff5e9;
   border-bottom: 12px solid var(--buyer-red);
 }
 
@@ -359,10 +353,8 @@ body {
   position: absolute;
   inset: 0 0 12px;
   pointer-events: none;
-  opacity: 0.08;
-  background:
-    radial-gradient(circle at 20% 25%, var(--buyer-yellow) 0 6rem, transparent 6.1rem),
-    radial-gradient(circle at 85% 70%, var(--buyer-coral) 0 7rem, transparent 7.1rem);
+  opacity: 0.18;
+  background: url("../images/hero-brick.png") center/cover no-repeat;
 }
 
 .buyer-hero-inner {
@@ -765,15 +757,12 @@ body {
 }
 
 .buyer-mural-photo {
-  background:
-    radial-gradient(circle at 50% 24%, #382d17 0 3.2rem, transparent 3.25rem),
-    linear-gradient(90deg, transparent 0 35%, #ba0015 35% 65%, transparent 65%),
-    linear-gradient(#fff 0 48%, #fce5c0 48% 100%);
+  background: url("../images/community/exchange.png") center/cover no-repeat,
+    #fff;
 }
 
 .buyer-mural-green {
-  background:
-    linear-gradient(135deg, transparent 0 35%, rgba(255, 255, 255, 0.45) 35% 50%, transparent 50%),
+  background: url("../images/community/delivery.png") center/cover no-repeat,
     #71f69d;
 }
 

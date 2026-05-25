@@ -87,6 +87,9 @@ $buyerId = seed_user($pdo, 'buyer@sisonke.test', 'Lerato Nkosi', 'buyer', '321 V
 
 $pdo->prepare("UPDATE sellers SET verification_status = 'verified', reputation_score = 4.80 WHERE seller_id = ?")->execute([$sellerId]);
 
+// image_url is intentionally left NULL: sisonke_campaign_image_url() falls
+// back to the bundled product photo so the path is always computed from the
+// current SISONKE_BASE_URL at render time.
 $maizeId = seed_product(
     $pdo,
     $sellerId,
@@ -94,8 +97,7 @@ $maizeId = seed_product(
     'Premium white maize meal for household and spaza shop bulk buying.',
     'Groceries',
     105.00,
-    180,
-    sisonke_default_product_image_url('maize')
+    180
 );
 $shoesId = seed_product(
     $pdo,
@@ -104,8 +106,7 @@ $shoesId = seed_product(
     'Durable black school shoes for primary learners and uniform resellers.',
     'School goods',
     165.00,
-    80,
-    sisonke_default_product_image_url('shoes')
+    80
 );
 $groceryId = seed_product(
     $pdo,
@@ -114,8 +115,7 @@ $groceryId = seed_product(
     'Community pantry pack with oil, sugar, tea, beans, rice, and soap.',
     'Household essentials',
     520.00,
-    45,
-    sisonke_default_product_image_url('grocery')
+    45
 );
 
 $deadline = date('Y-m-d H:i:s', strtotime('+21 days'));

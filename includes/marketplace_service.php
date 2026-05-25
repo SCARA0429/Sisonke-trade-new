@@ -173,16 +173,17 @@ function sisonke_campaign_visual_key(array $campaign): string
 }
 
 /**
- * Returns a real photo URL to display when a product or campaign has no
- * seller-uploaded image. Photos are public Unsplash images served from
- * Unsplash's CDN; sellers can always override by uploading their own.
+ * Returns a fallback product photo to display when a campaign or product
+ * has no seller-uploaded image. The images are bundled with the app under
+ * assets/images/products/ so the marketplace is never empty.
  */
 function sisonke_default_product_image_url(string $visualKey): string
 {
+    $base = SISONKE_BASE_URL;
     $defaults = [
-        'maize' => 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=800&q=80&auto=format&fit=crop',
-        'shoes' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80&auto=format&fit=crop',
-        'grocery' => 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80&auto=format&fit=crop',
+        'maize' => $base . '/assets/images/products/maize.png',
+        'shoes' => $base . '/assets/images/products/shoes.png',
+        'grocery' => $base . '/assets/images/products/grocery.png',
     ];
 
     return $defaults[$visualKey] ?? $defaults['grocery'];
