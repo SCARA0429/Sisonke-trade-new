@@ -6,6 +6,7 @@ $pageTitle = $pageTitle ?? 'Sisonke Trade';
 $bodyClass = $bodyClass ?? 'website-page';
 require_once dirname(__DIR__) . '/config/db.php';
 require_once __DIR__ . '/i18n.php';
+require_once __DIR__ . '/auth_service.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
