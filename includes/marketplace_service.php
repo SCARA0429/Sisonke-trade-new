@@ -157,26 +157,21 @@ function sisonke_require_admin_capability(PDO $pdo, string $capability): void
 
 function sisonke_campaign_visual_key(array $campaign): string
 {
-    $text = strtolower((string) (($campaign['category'] ?? '') . ' ' . ($campaign['product_name'] ?? '') . ' ' . ($campaign['name'] ?? '')));
+    $category = strtolower((string) ($campaign['category'] ?? ''));
 
-    if (str_contains($text, 'maize') || str_contains($text, 'meal')) {
-        return 'maize';
-    }
-    if (str_contains($text, 'grocery') || str_contains($text, 'pantry') || str_contains($text, 'food')) {
-        return 'grocery';
-    }
-    if (str_contains($text, 'shoe') || str_contains($text, 'school')) {
+    if (str_contains($category, 'school')) {
         return 'shoes';
     }
+    if (str_contains($category, 'household') || str_contains($category, 'grocery')) {
+        return 'grocery';
+    }
+    if (str_contains($category, 'grocer')) {
+        return 'maize';
+    }
 
-    return 'maize';
+    return 'grocery';
 }
 
-/**
- * Returns a fallback product photo to display when a campaign or product
- * has no seller-uploaded image. The images are bundled with the app under
- * assets/images/products/ so the marketplace is never empty.
- */
 function sisonke_default_product_image_url(string $visualKey): string
 {
     $base = SISONKE_BASE_URL;
@@ -189,10 +184,6 @@ function sisonke_default_product_image_url(string $visualKey): string
     return $defaults[$visualKey] ?? $defaults['grocery'];
 }
 
-/**
- * Returns the best image URL for a campaign: the seller-uploaded one if
- * present, otherwise a real fallback photo based on the campaign category.
- */
 function sisonke_campaign_image_url(array $campaign): string
 {
     $uploaded = trim((string) ($campaign['image_url'] ?? ''));
@@ -326,11 +317,29 @@ function sisonke_join_campaign(PDO $pdo, int $buyerId, int $campaignId, int $qua
     sisonke_bootstrap_marketplace_schema($pdo);
 
     $quantity = max(1, min(50, $quantity));
-    $paymentMethod = in_array($paymentMethod, ['payfast_sandbox', 'ozow_eft', 'card_3ds', 'cash_pickup_demo'], true)
+    $paymentMethod = in_array($paymentMethod, ['payfast', 'payfast_sandbox', 'ozow_eft', 'card_3ds', 'cash_pickup_demo'], true)
         ? $paymentMethod
-        : 'payfast_sandbox';
+        : 'payfast';
+
+    $reference = $externalReference !== ''
+        ? $externalReference
+        : 'ST-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
 
     try {
+        if ($externalReference !== '') {
+            $stmt = $pdo->prepare('SELECT transaction_id, participant_id FROM transactions WHERE reference_number = ? LIMIT 1');
+            $stmt->execute([$reference]);
+            $existing = $stmt->fetch();
+            if (is_array($existing)) {
+                return [
+                    'success' => true,
+                    'message' => 'Campaign already joined for this payment reference.',
+                    'participant_id' => (int) ($existing['participant_id'] ?? 0),
+                    'reference' => $reference,
+                ];
+            }
+        }
+
         $pdo->beginTransaction();
 
         $stmt = $pdo->prepare(
@@ -380,9 +389,6 @@ function sisonke_join_campaign(PDO $pdo, int $buyerId, int $campaignId, int $qua
         $stmt->execute([$campaignId, $buyerId, $quantity, $amount]);
         $participantId = (int) $pdo->lastInsertId();
 
-        $reference = $externalReference !== ''
-            ? $externalReference
-            : 'ST-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
         $stmt = $pdo->prepare(
             'INSERT INTO transactions
                 (escrow_id, participant_id, buyer_id, seller_id, amount, payment_method, status, reference_number)
@@ -410,9 +416,15 @@ function sisonke_join_campaign(PDO $pdo, int $buyerId, int $campaignId, int $qua
 
         $pdo->commit();
 
+        $successMessage = match ($paymentMethod) {
+            'payfast' => 'Campaign joined. Your PayFast payment is held in escrow.',
+            'payfast_sandbox' => 'Campaign joined. Your PayFast sandbox payment is held in escrow.',
+            default => 'Campaign joined. Your payment is held in escrow.',
+        };
+
         return [
             'success' => true,
-            'message' => 'Campaign joined. Your PayFast sandbox payment is held in escrow.',
+            'message' => $successMessage,
             'participant_id' => $participantId,
             'reference' => $reference,
         ];

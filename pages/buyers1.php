@@ -22,35 +22,6 @@ $campaigns = array_map(static function (array $campaign): array {
     ];
 }, $dbCampaigns);
 
-if ($campaigns === []) {
-    $campaigns = [
-    [
-        'tag' => '75% filled',
-        'title' => '10KG Maize Meal',
-        'description' => sisonke_content_t('Premium white maize. Minimum order 20 units for bulk pricing.'),
-        'price' => 'R89.99',
-        'image' => sisonke_default_product_image_url('maize'),
-        'href' => SISONKE_BASE_URL . '/pages/campaigns.php',
-    ],
-    [
-        'tag' => '40% filled',
-        'title' => 'School Shoes',
-        'description' => sisonke_content_t('Durable leather school shoes. Sized for primary learners.'),
-        'price' => 'R249.99',
-        'image' => sisonke_default_product_image_url('shoes'),
-        'href' => SISONKE_BASE_URL . '/pages/campaigns.php',
-    ],
-    [
-        'tag' => 'New',
-        'title' => 'Grocery Mix',
-        'description' => sisonke_content_t('Essential pantry pack: Oil, Sugar, Tea, Beans, Rice.'),
-        'price' => 'R329.99',
-        'image' => sisonke_default_product_image_url('grocery'),
-        'href' => SISONKE_BASE_URL . '/pages/campaigns.php',
-    ],
-    ];
-}
-
 $reasons = [
     [
         'title' => sisonke_t('home_reason_1_title'),
@@ -164,6 +135,9 @@ $reasons = [
                     <h2><?= htmlspecialchars(sisonke_t('home_featured_campaigns'), ENT_QUOTES, 'UTF-8') ?></h2>
                     <a href="<?= $assetBase ?>/pages/campaigns.php"><?= htmlspecialchars(sisonke_t('home_view_all'), ENT_QUOTES, 'UTF-8') ?> <span aria-hidden="true">&rarr;</span></a>
                 </div>
+                <?php if ($campaigns === []): ?>
+                    <div class="st-empty"><?= htmlspecialchars(sisonke_t('marketplace_no_campaigns'), ENT_QUOTES, 'UTF-8') ?></div>
+                <?php else: ?>
                 <div class="buyer-card-grid">
                     <?php foreach ($campaigns as $campaign): ?>
                         <article class="buyer-card">
@@ -185,6 +159,7 @@ $reasons = [
                         </article>
                     <?php endforeach; ?>
                 </div>
+                <?php endif; ?>
             </div>
         </section>
 

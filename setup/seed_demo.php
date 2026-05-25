@@ -87,9 +87,6 @@ $buyerId = seed_user($pdo, 'buyer@sisonke.test', 'Lerato Nkosi', 'buyer', '321 V
 
 $pdo->prepare("UPDATE sellers SET verification_status = 'verified', reputation_score = 4.80 WHERE seller_id = ?")->execute([$sellerId]);
 
-// image_url is intentionally left NULL: sisonke_campaign_image_url() falls
-// back to the bundled product photo so the path is always computed from the
-// current SISONKE_BASE_URL at render time.
 $maizeId = seed_product(
     $pdo,
     $sellerId,
@@ -148,7 +145,7 @@ if ($participantId > 0) {
             $buyerId,
             $sellerId,
             'Pickup window missed',
-            'Demo case for admin moderation and escrow review screenshots.',
+            'Buyer could not collect during the agreed pickup window.',
             'reviewing',
         ]);
     }

@@ -2,23 +2,20 @@
 
 declare(strict_types=1);
 
+require_once dirname(__DIR__) . '/config/db.php';
+require_once dirname(__DIR__) . '/includes/payfast_service.php';
+require_once dirname(__DIR__) . '/includes/i18n.php';
+
 header('Content-Type: text/plain; charset=utf-8');
 
-require_once dirname(__DIR__) . '/includes/payfast_service.php';
-
 $payload = $_POST;
-$reference = trim((string) ($payload['m_payment_id'] ?? ''));
-$status = strtoupper(trim((string) ($payload['payment_status'] ?? '')));
-
-if ($reference === '') {
+if ($payload === []) {
     http_response_code(400);
-    echo 'Missing PayFast payment reference';
+    echo 'Empty PayFast notification';
     exit;
 }
 
-if ($status !== 'COMPLETE') {
-    echo 'PayFast sandbox notification received without COMPLETE status';
-    exit;
-}
+$result = sisonke_payfast_process_payment($pdo, $payload);
 
-echo 'PayFast sandbox notification received for ' . $reference;
+http_response_code($result['success'] ? 200 : 400);
+echo $result['success'] ? 'OK' : 'FAILED';

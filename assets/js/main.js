@@ -39,9 +39,11 @@
 
       var emailInput = form.querySelector('[name="email"]');
       var passwordInput = form.querySelector('[name="password"]');
+      var returnInput = form.querySelector('[name="return"]');
       var payload = {
         email: emailInput ? emailInput.value : '',
-        password: passwordInput ? passwordInput.value : ''
+        password: passwordInput ? passwordInput.value : '',
+        return: returnInput ? returnInput.value : ''
       };
 
       if (submitBtn) {

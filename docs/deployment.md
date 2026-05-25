@@ -69,11 +69,22 @@ typically fits the trial; monitor usage in the Railway dashboard.
    `config/db.php` reads `MYSQL*` directly — no `SISONKE_DB_*` vars required
    when using references.
 
-3. Add the public URL for PayFast callbacks:
+3. Add the public URL and PayFast settings:
 
    | Variable | Value |
    |---|---|
    | `SISONKE_PUBLIC_URL` | `https://${{RAILWAY_PUBLIC_DOMAIN}}` |
+
+   For **live PayFast** (real card/EFT payments), also add:
+
+   | Variable | Value |
+   |---|---|
+   | `SISONKE_PAYFAST_MODE` | `live` |
+   | `SISONKE_PAYFAST_MERCHANT_ID` | your PayFast merchant ID |
+   | `SISONKE_PAYFAST_MERCHANT_KEY` | your PayFast merchant key |
+   | `SISONKE_PAYFAST_PASSPHRASE` | your PayFast passphrase |
+
+   Leave `SISONKE_PAYFAST_MODE` unset (or set to `sandbox`) while testing with PayFast's sandbox credentials.
 
 4. Deploy (or wait for the first build to finish).
 
@@ -108,7 +119,11 @@ Confirm: visit `https://<your-domain>.up.railway.app/tools/hosting-check.php`.
 | `MYSQLUSER` | Yes | MySQL user |
 | `MYSQLPASSWORD` | Yes | MySQL password |
 | `MYSQLDATABASE` | Yes | Database name (`railway` by default) |
-| `SISONKE_PUBLIC_URL` | Yes | `https://your-app.up.railway.app` (PayFast) |
+| `SISONKE_PUBLIC_URL` | Yes | `https://your-app.up.railway.app` (PayFast return/notify URLs) |
+| `SISONKE_PAYFAST_MODE` | No | `live` for real payments, `sandbox` for testing (default: sandbox) |
+| `SISONKE_PAYFAST_MERCHANT_ID` | Live only | From your PayFast merchant account |
+| `SISONKE_PAYFAST_MERCHANT_KEY` | Live only | From your PayFast merchant account |
+| `SISONKE_PAYFAST_PASSPHRASE` | Live only | PayFast security passphrase (required for live ITN verification) |
 | `SISONKE_BASE_URL` | No | Leave empty at domain root |
 | `SISONKE_DB_*` | No | Optional overrides; `MYSQL*` takes precedence via shared names |
 

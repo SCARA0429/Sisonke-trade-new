@@ -12,3 +12,9 @@ define('DB_NAME', 'sisonke_trade');
 // Railway (production) — reference MySQL service variables in the dashboard:
 //   MYSQLHOST, MYSQLPORT, MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE
 //   SISONKE_PUBLIC_URL = https://${{RAILWAY_PUBLIC_DOMAIN}}
+//
+// Live PayFast (real payments):
+//   SISONKE_PAYFAST_MODE = live
+//   SISONKE_PAYFAST_MERCHANT_ID = your merchant id
+//   SISONKE_PAYFAST_MERCHANT_KEY = your merchant key
+//   SISONKE_PAYFAST_PASSPHRASE = your passphrase

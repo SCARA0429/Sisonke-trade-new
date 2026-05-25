@@ -8,6 +8,7 @@ require_once dirname(__DIR__) . '/includes/i18n.php';
 $errors = [];
 $registered = isset($_GET['registered']);
 $suspended = ($_GET['error'] ?? '') === 'account_suspended';
+$returnPath = sisonke_safe_return_path($_POST['return'] ?? $_GET['return'] ?? '');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = (string) ($_POST['email'] ?? '');
@@ -23,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $result['full_name'],
             true
         );
-        header('Location: ' . sisonke_dashboard_path_for_role($result['role']));
+        header('Location: ' . ($returnPath !== '' ? $returnPath : sisonke_dashboard_path_for_role($result['role'])));
         exit;
     }
 
@@ -71,6 +72,7 @@ $base = htmlspecialchars(SISONKE_BASE_URL, ENT_QUOTES, 'UTF-8');
                   data-login-api="<?= $base ?>/api/login.php"
                   class="auth-form needs-validation"
                   novalidate>
+                <input type="hidden" name="return" value="<?= htmlspecialchars($returnPath, ENT_QUOTES, 'UTF-8') ?>">
                 <div class="auth-field">
                     <label for="login-email"><?= htmlspecialchars(sisonke_t('email'), ENT_QUOTES, 'UTF-8') ?></label>
                     <input type="email"

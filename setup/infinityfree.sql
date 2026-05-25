@@ -199,9 +199,7 @@ VALUES (@buyer_id, '321 Vilakazi Street, Soweto', 0, 0)
 ON DUPLICATE KEY UPDATE
   delivery_address = VALUES(delivery_address);
 
--- image_url is left NULL on purpose: sisonke_campaign_image_url() in
--- includes/marketplace_service.php returns the bundled fallback photo
--- from /assets/images/products/* whenever a row has no uploaded image.
+// image_url is left NULL; sisonke_campaign_image_url() supplies a default at render time.
 INSERT INTO products (seller_id, name, description, category, unit_price, quantity_available, image_url, is_active)
 SELECT @seller_id, '10KG Maize Meal', 'Premium white maize meal for household and spaza shop bulk buying.', 'Groceries', 105.00, 180, NULL, 1
 WHERE NOT EXISTS (
@@ -294,7 +292,7 @@ SELECT
   @buyer_id,
   @seller_id,
   'Pickup window missed',
-  'Demo case for admin moderation and escrow review screenshots.',
+  'Buyer could not collect during the agreed pickup window.',
   'reviewing'
 WHERE NOT EXISTS (
   SELECT 1 FROM disputes WHERE participant_id = @demo_participant_id

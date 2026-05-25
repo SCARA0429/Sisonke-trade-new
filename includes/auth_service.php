@@ -19,19 +19,28 @@ function sisonke_dashboard_path_for_role(string $role): string
     };
 }
 
-/**
- * True if the given role can both buy and sell from a single account.
- * 'user' is the unified C2C role created by the public registration form.
- * Legacy 'buyer' and 'seller' roles remain for demo accounts and existing
- * data, but only 'user' has both profile rows.
- */
+function sisonke_safe_return_path(mixed $returnPath): string
+{
+    $returnPath = trim((string) $returnPath);
+
+    if ($returnPath === '' || !str_starts_with($returnPath, SISONKE_BASE_URL . '/')) {
+        return '';
+    }
+
+    if (str_contains($returnPath, "\r") || str_contains($returnPath, "\n")) {
+        return '';
+    }
+
+    return $returnPath;
+}
+
 function sisonke_role_can_act_as(string $role, string $capability): bool
 {
     $role = strtolower(trim($role));
     $capability = strtolower(trim($capability));
 
     return match ($capability) {
-        'buyer' => in_array($role, ['user', 'buyer'], true),
+        'buyer' => in_array($role, ['user', 'buyer', 'seller'], true),
         'seller' => in_array($role, ['user', 'seller'], true),
         'admin' => $role === 'admin',
         default => false,

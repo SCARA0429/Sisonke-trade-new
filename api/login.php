@@ -23,6 +23,7 @@ try {
 
     $email = '';
     $password = '';
+    $returnPath = '';
     $contentType = $_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? '';
 
     if (is_string($contentType) && stripos($contentType, 'application/json') !== false) {
@@ -31,10 +32,12 @@ try {
         if (is_array($data)) {
             $email = (string) ($data['email'] ?? '');
             $password = (string) ($data['password'] ?? '');
+            $returnPath = sisonke_safe_return_path($data['return'] ?? '');
         }
     } else {
         $email = (string) ($_POST['email'] ?? '');
         $password = (string) ($_POST['password'] ?? '');
+        $returnPath = sisonke_safe_return_path($_POST['return'] ?? '');
     }
 
     $result = sisonke_verify_login($pdo, $email, $password);
@@ -56,7 +59,7 @@ try {
     echo json_encode([
         'success' => true,
         'message' => 'Logged in successfully.',
-        'redirect' => sisonke_dashboard_path_for_role($result['role']),
+        'redirect' => $returnPath !== '' ? $returnPath : sisonke_dashboard_path_for_role($result['role']),
         'role' => $result['role'],
     ]);
 } catch (Throwable $e) {

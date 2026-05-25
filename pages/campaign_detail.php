@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/marketplace_service.php';
+require_once dirname(__DIR__) . '/includes/payfast_service.php';
 require_once dirname(__DIR__) . '/includes/i18n.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -68,7 +69,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
                 <h2 class="st-card-title mb-3"><?= sisonke_e(sisonke_t('join_campaign')) ?></h2>
                 <?php if ($campaign['status'] !== 'active'): ?>
                     <div class="alert alert-warning"><?= sisonke_e(sisonke_t('campaign_currently_status', ['status' => sisonke_content_t($campaign['status'])])) ?></div>
-                <?php elseif (sisonke_current_role() === 'buyer'): ?>
+                <?php elseif (sisonke_current_user_id() !== null && sisonke_role_can_act_as(sisonke_current_role(), 'buyer')): ?>
                     <form method="post" action="<?= sisonke_e(SISONKE_BASE_URL) ?>/pages/payfast_checkout.php">
                         <input type="hidden" name="campaign_id" value="<?= (int) $campaign['campaign_id'] ?>">
                         <div class="mb-3">
@@ -76,14 +77,14 @@ require_once dirname(__DIR__) . '/includes/header.php';
                             <input class="st-form-control" id="quantity" type="number" name="quantity" value="1" min="1" max="50" required>
                         </div>
                         <div class="mb-3">
-                            <span class="st-badge st-badge-green"><?= sisonke_e(sisonke_t('payfast_sandbox')) ?></span>
-                            <p class="st-meta mt-2 mb-0"><?= sisonke_e(sisonke_t('payfast_review_notice')) ?></p>
+                            <span class="st-badge st-badge-green"><?= sisonke_e(sisonke_t(sisonke_payfast_gateway_label_key())) ?></span>
+                            <p class="st-meta mt-2 mb-0"><?= sisonke_e(sisonke_t(sisonke_payfast_is_sandbox() ? 'payfast_review_notice' : 'payfast_review_notice_live')) ?></p>
                         </div>
-                        <button class="st-btn st-btn-yellow" type="submit"><?= sisonke_e(sisonke_t('continue_to_payfast')) ?></button>
+                        <button class="st-btn st-btn-yellow" type="submit"><?= sisonke_e(sisonke_t(sisonke_payfast_continue_label_key())) ?></button>
                     </form>
                 <?php else: ?>
                     <p class="st-meta"><?= sisonke_e(sisonke_t('buyer_join_notice')) ?></p>
-                    <a class="st-btn st-btn-yellow" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/pages/login.php"><?= sisonke_e(sisonke_t('login_to_join')) ?></a>
+                    <a class="st-btn st-btn-yellow" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/pages/login.php?return=<?= urlencode(SISONKE_BASE_URL . '/pages/campaign_detail.php?id=' . (int) $campaign['campaign_id']) ?>"><?= sisonke_e(sisonke_t('login_to_join')) ?></a>
                     <a class="st-btn st-btn-outline mt-2" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/pages/register.php"><?= sisonke_e(sisonke_t('register_as_buyer')) ?></a>
                 <?php endif; ?>
 
