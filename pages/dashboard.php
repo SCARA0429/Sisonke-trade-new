@@ -75,15 +75,18 @@ require_once dirname(__DIR__) . '/includes/header.php';
                             <td><span class="st-badge <?= $order['escrow_status'] === 'released' ? 'st-badge-green' : 'st-badge' ?>"><?= sisonke_e(sisonke_content_t($order['escrow_status'] ?? 'held')) ?></span></td>
                             <td><?= sisonke_e($order['reference_number'] ?? sisonke_t('pending')) ?></td>
                             <td>
-                                <?php if ((bool) $order['has_confirmed_delivery']): ?>
-                                    <span class="st-badge st-badge-green"><?= sisonke_e(sisonke_t('confirmed')) ?></span>
-                                <?php else: ?>
-                                    <form method="post" action="<?= sisonke_e(SISONKE_BASE_URL) ?>/pages/dashboard.php">
-                                        <input type="hidden" name="action" value="confirm_delivery">
-                                        <input type="hidden" name="participant_id" value="<?= (int) $order['participant_id'] ?>">
-                                        <button class="st-btn st-btn-yellow" type="submit"><?= sisonke_e(sisonke_t('confirm_delivery')) ?></button>
-                                    </form>
-                                <?php endif; ?>
+                                <div class="d-flex flex-column gap-2">
+                                    <a class="st-btn st-btn-outline" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/pages/campaign_message.php?campaign=<?= (int) $order['campaign_id'] ?>"><?= sisonke_e(sisonke_t('message_seller')) ?></a>
+                                    <?php if ((bool) $order['has_confirmed_delivery']): ?>
+                                        <span class="st-badge st-badge-green"><?= sisonke_e(sisonke_t('confirmed')) ?></span>
+                                    <?php else: ?>
+                                        <form method="post" action="<?= sisonke_e(SISONKE_BASE_URL) ?>/pages/dashboard.php">
+                                            <input type="hidden" name="action" value="confirm_delivery">
+                                            <input type="hidden" name="participant_id" value="<?= (int) $order['participant_id'] ?>">
+                                            <button class="st-btn st-btn-yellow" type="submit"><?= sisonke_e(sisonke_t('confirm_delivery')) ?></button>
+                                        </form>
+                                    <?php endif; ?>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>

@@ -523,6 +523,9 @@ function sisonke_join_campaign(PDO $pdo, int $buyerId, int $campaignId, int $qua
 
         $pdo->commit();
 
+        require_once __DIR__ . '/messaging_service.php';
+        sisonke_touch_conversation_after_purchase($pdo, $campaignId, $buyerId);
+
         $successMessage = match ($paymentMethod) {
             'payfast' => 'Campaign joined. Your PayFast payment is held in escrow.',
             'payfast_sandbox' => 'Campaign joined. Your PayFast sandbox payment is held in escrow.',

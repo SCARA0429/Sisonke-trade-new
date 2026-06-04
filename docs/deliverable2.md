@@ -2,7 +2,23 @@
 
 ## 2.1 Introduction
 
-Sisonke Trade is a Consumer-to-Consumer e-commerce website prototype built for South African informal traders, side-hustlers, and community buyers. The website lets individuals register one C2C account that can both buy from other users' campaigns and sell their own goods, join group-buy campaigns, and complete a secure PayFast sandbox payment and escrow workflow. This responds to the growth of South African online retail, the importance of the informal sector, and the need for trusted digital trade where sellers may not have formal business infrastructure. The project includes a main website, seller website pages, buyer order tracking, multilingual user-facing interface options, and an admin website with Role-Based Access Control (RBAC). Admins can manage users, roles, seller verification, escrow transactions, and disputes. The website prototype is implemented with HTML, CSS, JavaScript, PHP, and MySQL.
+**Hook (Problem)**  
+Informal traders and community buyers in South Africa often coordinate bulk deals on WhatsApp and classified sites with little payment protection, weak accountability, and no clear way to resolve late or failed deliveries.
+
+**Context (Market)**  
+Online retail and township digital shopping are growing, yet most platforms target formal stores or one-off sales—not traders who both buy and sell essentials in volume.
+
+**Gap (What's Missing)**  
+Few tools combine C2C group-buy campaigns, escrow, seller verification, per-campaign messaging, multilingual access, and admin moderation for everyday informal trade.
+
+**Solution (Your Platform)**  
+Sisonke Trade is a C2C group-buying website prototype: one account to browse or launch campaigns, pay via PayFast sandbox into escrow, confirm delivery, and message sellers before or after purchase; admins use RBAC to verify sellers, monitor transactions, and resolve disputes (PHP, MySQL, HTML, CSS, JavaScript).
+
+**Objectives (What You'll Do)**  
+Design and build responsive buyer, seller, and admin sites; document the system with CRC cards, EERD, context diagram, DFD, use cases, code samples, and test evidence.
+
+**Scope (Boundaries)**  
+Academic prototype only—PayFast sandbox, no live settlement, courier APIs, or native apps; custom code, no CMS; hosted demo with screenshots and source for lecturer review.
 
 Research references:
 

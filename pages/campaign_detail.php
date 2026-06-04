@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/marketplace_service.php';
 require_once dirname(__DIR__) . '/includes/payfast_service.php';
+require_once dirname(__DIR__) . '/includes/messaging_service.php';
 require_once dirname(__DIR__) . '/includes/i18n.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -23,6 +24,11 @@ if (!$campaign) {
 
 $pageTitle = $campaign['product_name'];
 $progress = sisonke_campaign_progress($campaign);
+$viewerId = sisonke_current_user_id();
+$viewerRole = sisonke_current_role();
+$canMessageSeller = $viewerId !== null
+    && sisonke_role_can_act_as($viewerRole, 'buyer')
+    && $viewerId !== (int) $campaign['seller_id'];
 require_once dirname(__DIR__) . '/includes/header.php';
 ?>
 <section class="st-hero-band">
@@ -96,6 +102,13 @@ require_once dirname(__DIR__) . '/includes/header.php';
                     <p class="st-meta"><?= sisonke_e(sisonke_t('buyer_join_notice')) ?></p>
                     <a class="st-btn st-btn-yellow" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/pages/login.php?return=<?= urlencode(SISONKE_BASE_URL . '/pages/campaign_detail.php?id=' . (int) $campaign['campaign_id']) ?>"><?= sisonke_e(sisonke_t('login_to_join')) ?></a>
                     <a class="st-btn st-btn-outline mt-2" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/pages/register.php"><?= sisonke_e(sisonke_t('register_as_buyer')) ?></a>
+                <?php endif; ?>
+
+                <?php if ($canMessageSeller): ?>
+                    <a class="st-btn st-btn-outline w-100 mb-3" href="<?= sisonke_e(sisonke_conversation_start_url((int) $campaign['campaign_id'])) ?>"><?= sisonke_e(sisonke_t('message_seller')) ?></a>
+                <?php elseif ($viewerId === null): ?>
+                    <p class="st-meta mb-2"><?= sisonke_e(sisonke_t('message_seller_login_hint')) ?></p>
+                    <a class="st-btn st-btn-outline w-100 mb-3" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/pages/login.php?return=<?= urlencode(SISONKE_BASE_URL . '/pages/campaign_message.php?campaign=' . (int) $campaign['campaign_id']) ?>"><?= sisonke_e(sisonke_t('login_to_message_seller')) ?></a>
                 <?php endif; ?>
 
                 <hr>
