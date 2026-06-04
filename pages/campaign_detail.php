@@ -52,8 +52,18 @@ require_once dirname(__DIR__) . '/includes/header.php';
                     <span style="width: <?= $progress ?>%"></span>
                 </div>
                 <dl class="row mb-0">
-                    <dt class="col-sm-5"><?= sisonke_e(sisonke_t('campaign_price')) ?></dt>
-                    <dd class="col-sm-7"><?= sisonke_money($campaign['campaign_price']) ?></dd>
+                    <?php if (sisonke_campaign_has_discount($campaign)): ?>
+                        <dt class="col-sm-5"><?= sisonke_e(sisonke_t('campaign_price_regular')) ?></dt>
+                        <dd class="col-sm-7"><span class="st-price-was"><?= sisonke_money($campaign['campaign_price']) ?></span></dd>
+                        <dt class="col-sm-5"><?= sisonke_e(sisonke_t('campaign_price_sale')) ?></dt>
+                        <dd class="col-sm-7">
+                            <strong class="st-price-sale"><?= sisonke_money(sisonke_campaign_customer_price($campaign)) ?></strong>
+                            <span class="st-badge st-badge-green ms-1"><?= sisonke_e(sisonke_campaign_discount_label($campaign)) ?></span>
+                        </dd>
+                    <?php else: ?>
+                        <dt class="col-sm-5"><?= sisonke_e(sisonke_t('campaign_price')) ?></dt>
+                        <dd class="col-sm-7"><?= sisonke_money($campaign['campaign_price']) ?></dd>
+                    <?php endif; ?>
                     <dt class="col-sm-5"><?= sisonke_e(sisonke_t('normal_unit_price')) ?></dt>
                     <dd class="col-sm-7"><?= sisonke_money($campaign['unit_price']) ?></dd>
                     <dt class="col-sm-5"><?= sisonke_e(sisonke_t('target_quantity')) ?></dt>

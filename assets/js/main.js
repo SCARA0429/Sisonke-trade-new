@@ -125,6 +125,80 @@
     updateLabels();
   }
 
+  function formatMoney(amount) {
+    var value = Number(amount);
+    if (!isFinite(value) || value < 0) {
+      return '—';
+    }
+    return 'R ' + value.toFixed(2);
+  }
+
+  function bindCampaignDiscountPreview() {
+    document.querySelectorAll('.js-campaign-discount').forEach(function (panel) {
+      var enable = panel.querySelector('.js-campaign-discount-enable');
+      var fields = panel.querySelector('.js-campaign-discount-fields');
+      var typeSelect = panel.querySelector('.js-campaign-discount-type');
+      var valueInput = panel.querySelector('.js-campaign-discount-value');
+      var preview = panel.querySelector('.js-campaign-discount-preview-amount');
+      var basePriceInput = panel.closest('form')
+        ? panel.closest('form').querySelector('.js-campaign-base-price')
+        : null;
+
+      if (!enable || !fields || !typeSelect || !valueInput || !preview || !basePriceInput) {
+        return;
+      }
+
+      function syncValueLimits() {
+        var isPercent = typeSelect.value === 'percent';
+        valueInput.min = isPercent ? '1' : '0.01';
+        valueInput.max = isPercent ? '90' : '';
+        valueInput.step = isPercent ? '1' : '0.01';
+        if (isPercent && Number(valueInput.value) > 90) {
+          valueInput.value = '10';
+        }
+      }
+
+      function updatePreview() {
+        var base = Number(basePriceInput.value);
+        if (!enable.checked || !isFinite(base) || base <= 0) {
+          preview.textContent = '—';
+          return;
+        }
+
+        var type = typeSelect.value;
+        var discountValue = Number(valueInput.value);
+        var sale = base;
+
+        if (type === 'percent') {
+          if (discountValue >= 1 && discountValue <= 90) {
+            sale = base * (1 - discountValue / 100);
+          }
+        } else if (discountValue > 0 && discountValue < base) {
+          sale = base - discountValue;
+        }
+
+        preview.textContent = formatMoney(sale);
+      }
+
+      function toggleFields() {
+        fields.hidden = !enable.checked;
+        valueInput.disabled = !enable.checked;
+        typeSelect.disabled = !enable.checked;
+        updatePreview();
+      }
+
+      enable.addEventListener('change', toggleFields);
+      typeSelect.addEventListener('change', function () {
+        syncValueLimits();
+        updatePreview();
+      });
+      valueInput.addEventListener('input', updatePreview);
+      basePriceInput.addEventListener('input', updatePreview);
+      syncValueLimits();
+      toggleFields();
+    });
+  }
+
   function bindSellerProductHighlight() {
     var page = document.querySelector('[data-highlight-product]');
     if (!page) {
@@ -149,6 +223,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     bindLoginForm();
     bindRoleFormHints();
+    bindCampaignDiscountPreview();
     bindSellerProductHighlight();
   });
 })();

@@ -60,6 +60,10 @@ CREATE TABLE IF NOT EXISTS group_buy_campaigns (
   seller_id INT NOT NULL,
   product_id INT NOT NULL,
   campaign_price DECIMAL(10,2) NOT NULL,
+  discount_enabled TINYINT(1) NOT NULL DEFAULT 0,
+  discount_type ENUM('percent','fixed') DEFAULT NULL,
+  discount_value DECIMAL(10,2) DEFAULT NULL,
+  sale_price DECIMAL(10,2) DEFAULT NULL,
   min_participants INT NOT NULL,
   max_participants INT NOT NULL,
   target_quantity INT NOT NULL,
@@ -199,7 +203,7 @@ VALUES (@buyer_id, '321 Vilakazi Street, Soweto', 0, 0)
 ON DUPLICATE KEY UPDATE
   delivery_address = VALUES(delivery_address);
 
-// image_url is left NULL; sisonke_campaign_image_url() supplies a default at render time.
+-- image_url is left NULL; sisonke_campaign_image_url() supplies a default at render time.
 INSERT INTO products (seller_id, name, description, category, unit_price, quantity_available, image_url, is_active)
 SELECT @seller_id, '10KG Maize Meal', 'Premium white maize meal for household and spaza shop bulk buying.', 'Groceries', 105.00, 180, NULL, 1
 WHERE NOT EXISTS (

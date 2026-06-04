@@ -111,7 +111,99 @@ function sisonke_bootstrap_marketplace_schema(PDO $pdo): void
         $pdo->exec('ALTER TABLE group_buy_campaigns ADD COLUMN image_url VARCHAR(255) DEFAULT NULL AFTER target_amount');
     }
 
+    if (!sisonke_column_exists($pdo, 'group_buy_campaigns', 'discount_enabled')) {
+        $pdo->exec('ALTER TABLE group_buy_campaigns ADD COLUMN discount_enabled TINYINT(1) NOT NULL DEFAULT 0 AFTER campaign_price');
+        $pdo->exec("ALTER TABLE group_buy_campaigns ADD COLUMN discount_type ENUM('percent','fixed') NULL AFTER discount_enabled");
+        $pdo->exec('ALTER TABLE group_buy_campaigns ADD COLUMN discount_value DECIMAL(10,2) NULL AFTER discount_type');
+        $pdo->exec('ALTER TABLE group_buy_campaigns ADD COLUMN sale_price DECIMAL(10,2) NULL AFTER discount_value');
+    }
+
     $bootstrapped = true;
+}
+
+function sisonke_campaign_customer_price(array $campaign): float
+{
+    if (!empty($campaign['discount_enabled']) && isset($campaign['sale_price']) && (float) $campaign['sale_price'] > 0) {
+        return (float) $campaign['sale_price'];
+    }
+
+    return (float) ($campaign['campaign_price'] ?? 0);
+}
+
+function sisonke_campaign_has_discount(array $campaign): bool
+{
+    if (empty($campaign['discount_enabled'])) {
+        return false;
+    }
+
+    $base = (float) ($campaign['campaign_price'] ?? 0);
+    $sale = (float) ($campaign['sale_price'] ?? 0);
+
+    return $sale > 0 && $sale < $base;
+}
+
+function sisonke_campaign_discount_label(array $campaign): string
+{
+    if (!sisonke_campaign_has_discount($campaign)) {
+        return '';
+    }
+
+    $type = (string) ($campaign['discount_type'] ?? 'percent');
+    $value = (float) ($campaign['discount_value'] ?? 0);
+
+    if ($type === 'fixed') {
+        return sisonke_t('campaign_discount_badge_fixed', ['value' => sisonke_money($value)]);
+    }
+
+    return sisonke_t('campaign_discount_badge_percent', ['value' => (string) (int) round($value)]);
+}
+
+function sisonke_parse_campaign_discount(float $campaignPrice, array $data): array
+{
+    $enabled = !empty($data['discount_enabled']);
+    if (!$enabled) {
+        return [
+            'success' => true,
+            'discount_enabled' => 0,
+            'discount_type' => null,
+            'discount_value' => null,
+            'sale_price' => null,
+        ];
+    }
+
+    $type = strtolower(trim((string) ($data['discount_type'] ?? 'percent')));
+    $value = (float) ($data['discount_value'] ?? 0);
+
+    if (!in_array($type, ['percent', 'fixed'], true)) {
+        return ['success' => false, 'message' => 'Choose a valid discount type.'];
+    }
+
+    if ($type === 'percent') {
+        if ($value < 1 || $value > 90) {
+            return ['success' => false, 'message' => 'Discount percent must be between 1 and 90.'];
+        }
+        $salePrice = round($campaignPrice * (1 - $value / 100), 2);
+    } else {
+        if ($value <= 0) {
+            return ['success' => false, 'message' => 'Discount amount must be greater than zero.'];
+        }
+        if ($value >= $campaignPrice) {
+            return ['success' => false, 'message' => 'Discount amount must be less than the campaign price.'];
+        }
+        $salePrice = round($campaignPrice - $value, 2);
+    }
+
+    if ($salePrice < 0.01) {
+        return ['success' => false, 'message' => 'Discount is too large for this campaign price.'];
+    }
+
+    return [
+        'success' => true,
+        'discount_enabled' => 1,
+        'discount_type' => $type,
+        'discount_value' => $value,
+        'sale_price' => $salePrice,
+    ];
 }
 
 function sisonke_admin_permissions(PDO $pdo, int $adminId): array
@@ -202,8 +294,13 @@ function sisonke_campaign_progress(array $campaign): int
     return min(100, (int) round(($current / $target) * 100));
 }
 
-function sisonke_fetch_campaigns(PDO $pdo, string $search = '', int $limit = 0, ?int $sellerId = null): array
-{
+function sisonke_fetch_campaigns(
+    PDO $pdo,
+    string $search = '',
+    int $limit = 0,
+    ?int $sellerId = null,
+    bool $saleOnly = false
+): array {
     sisonke_bootstrap_marketplace_schema($pdo);
 
     $where = ['p.is_active = 1'];
@@ -220,6 +317,12 @@ function sisonke_fetch_campaigns(PDO $pdo, string $search = '', int $limit = 0, 
         $params[] = $sellerId;
     }
 
+    if ($saleOnly) {
+        $where[] = 'c.discount_enabled = 1';
+        $where[] = 'c.sale_price IS NOT NULL';
+        $where[] = 'c.sale_price < c.campaign_price';
+    }
+
     $limitSql = $limit > 0 ? ' LIMIT ' . $limit : '';
     $sql = "
         SELECT
@@ -227,6 +330,10 @@ function sisonke_fetch_campaigns(PDO $pdo, string $search = '', int $limit = 0, 
             c.seller_id,
             c.product_id,
             c.campaign_price,
+            c.discount_enabled,
+            c.discount_type,
+            c.discount_value,
+            c.sale_price,
             c.min_participants,
             c.max_participants,
             c.target_quantity,
@@ -373,7 +480,7 @@ function sisonke_join_campaign(PDO $pdo, int $buyerId, int $campaignId, int $qua
             return ['success' => false, 'message' => 'The campaign is already full.'];
         }
 
-        $amount = round((float) $campaign['campaign_price'] * $quantity, 2);
+        $amount = round(sisonke_campaign_customer_price($campaign) * $quantity, 2);
 
         $stmt = $pdo->prepare(
             'INSERT INTO escrow_payments (campaign_id, total_amount, status, confirmations_required)
@@ -686,6 +793,8 @@ function sisonke_validate_campaign_image_url(string $imageUrl): array
 
 function sisonke_create_campaign(PDO $pdo, int $sellerId, array $data, array $files = []): array
 {
+    sisonke_bootstrap_marketplace_schema($pdo);
+
     $productId = (int) ($data['product_id'] ?? 0);
     $campaignPrice = (float) ($data['campaign_price'] ?? 0);
     $minParticipants = max(1, (int) ($data['min_participants'] ?? 1));
@@ -726,16 +835,29 @@ function sisonke_create_campaign(PDO $pdo, int $sellerId, array $data, array $fi
         $imageUrl = $urlResult['path'];
     }
 
-    $targetAmount = round($campaignPrice * $targetQuantity, 2);
+    $discount = sisonke_parse_campaign_discount($campaignPrice, $data);
+    if (empty($discount['success'])) {
+        return ['success' => false, 'message' => $discount['message'] ?? 'Invalid campaign discount.'];
+    }
+
+    $customerPrice = $discount['discount_enabled']
+        ? (float) $discount['sale_price']
+        : $campaignPrice;
+    $targetAmount = round($customerPrice * $targetQuantity, 2);
     $stmt = $pdo->prepare(
         'INSERT INTO group_buy_campaigns
-            (seller_id, product_id, campaign_price, min_participants, max_participants, target_quantity, target_amount, image_url, deadline)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            (seller_id, product_id, campaign_price, discount_enabled, discount_type, discount_value, sale_price,
+             min_participants, max_participants, target_quantity, target_amount, image_url, deadline)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
     );
     $stmt->execute([
         $sellerId,
         $productId,
         $campaignPrice,
+        (int) $discount['discount_enabled'],
+        $discount['discount_type'],
+        $discount['discount_value'],
+        $discount['sale_price'],
         $minParticipants,
         $maxParticipants,
         $targetQuantity,

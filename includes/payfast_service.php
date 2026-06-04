@@ -348,7 +348,7 @@ function sisonke_payfast_create_intent(PDO $pdo, array $campaign, int $buyerId, 
     }
 
     $quantity = max(1, min(50, $quantity));
-    $amount = number_format((float) $campaign['campaign_price'] * $quantity, 2, '.', '');
+    $amount = number_format(sisonke_campaign_customer_price($campaign) * $quantity, 2, '.', '');
     $reference = sisonke_payfast_reference();
     $nameParts = preg_split('/\s+/', trim($buyerName), 2) ?: [];
     $firstName = $nameParts[0] ?? 'Sisonke';

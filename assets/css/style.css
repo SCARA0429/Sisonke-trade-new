@@ -566,6 +566,19 @@ body {
   font-weight: 700;
 }
 
+.buyer-section-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+
+.st-marketplace-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
 .buyer-card-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1461,6 +1474,47 @@ tr.is-highlighted {
   margin-bottom: 0.35rem;
   color: var(--st-ink);
   font-weight: 800;
+}
+
+.st-discount-panel {
+  border: 2px dashed var(--st-black);
+  padding: 1rem 1.1rem;
+  background: rgba(255, 214, 0, 0.12);
+}
+
+.st-discount-panel legend {
+  padding: 0 0.25rem;
+}
+
+.st-campaign-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.65rem;
+}
+
+.st-price-was,
+.buyer-price-was {
+  color: #6b6b6b;
+  text-decoration: line-through;
+  font-size: 0.92em;
+}
+
+.st-price-sale {
+  color: var(--st-ink);
+}
+
+.st-price-badge,
+.buyer-price-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.buyer-price-row .buyer-price-badge {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--st-red);
+  font-size: 0.75rem;
 }
 
 .st-badge {

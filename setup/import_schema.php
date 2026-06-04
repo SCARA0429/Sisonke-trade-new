@@ -30,7 +30,7 @@ foreach ($statements as $statement) {
     $lines = preg_split('/\R/', trim($statement)) ?: [];
     $lines = array_values(array_filter(
         $lines,
-        static fn (string $line): bool => !preg_match('/^\s*--/', $line)
+        static fn (string $line): bool => !preg_match('/^\s*(?:--|\/\/)/', $line)
     ));
     $statement = trim(implode("\n", $lines));
     if ($statement === '') {

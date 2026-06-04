@@ -116,7 +116,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
                                         <strong><?= sisonke_e($campaign['product_name']) ?></strong><br>
                                         <span class="st-meta"><?= sisonke_e(sisonke_content_t($campaign['category'])) ?></span>
                                     </td>
-                                    <td><?= sisonke_money($campaign['campaign_price']) ?></td>
+                                    <td><?php $priceClass = 'st-campaign-price'; require dirname(__DIR__) . '/../includes/partials/campaign_price.php'; ?></td>
                                     <td>
                                         <div class="st-progress">
                                             <span style="width: <?= $progress ?>%"></span>

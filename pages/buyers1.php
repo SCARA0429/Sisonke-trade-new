@@ -28,7 +28,9 @@ $campaigns = array_map(static function (array $campaign): array {
         'tag' => sisonke_t('campaign_committed', ['progress' => sisonke_campaign_progress($campaign)]),
         'title' => (string) $campaign['product_name'],
         'description' => sisonke_content_t($campaign['description']),
-        'price' => sisonke_money($campaign['campaign_price']),
+        'price' => sisonke_money(sisonke_campaign_customer_price($campaign)),
+        'price_was' => sisonke_campaign_has_discount($campaign) ? sisonke_money($campaign['campaign_price']) : '',
+        'discount_label' => sisonke_campaign_discount_label($campaign),
         'image' => sisonke_campaign_image_url($campaign),
         'href' => SISONKE_BASE_URL . '/pages/campaign_detail.php?id=' . (int) $campaign['campaign_id'],
     ];
@@ -66,7 +68,7 @@ $reasons = [
         <nav class="buyer-nav" aria-label="Primary navigation">
             <a class="is-active" href="<?= $assetBase ?>/pages/buyers1.php"><?= htmlspecialchars(sisonke_t('home_nav_home'), ENT_QUOTES, 'UTF-8') ?></a>
             <a href="<?= $assetBase ?>/pages/campaigns.php"><?= htmlspecialchars(sisonke_t('home_nav_shop'), ENT_QUOTES, 'UTF-8') ?></a>
-            <a href="#deals"><?= htmlspecialchars(sisonke_t('home_nav_deals'), ENT_QUOTES, 'UTF-8') ?></a>
+            <a href="<?= $assetBase ?>/pages/campaigns.php?sale=1"><?= htmlspecialchars(sisonke_t('home_nav_deals'), ENT_QUOTES, 'UTF-8') ?></a>
             <?php if ($canBuy): ?>
                 <a href="<?= $assetBase ?>/pages/dashboard.php"><?= htmlspecialchars(sisonke_t('nav_my_orders'), ENT_QUOTES, 'UTF-8') ?></a>
             <?php endif; ?>
@@ -159,7 +161,10 @@ $reasons = [
             <div class="buyer-shell">
                 <div class="buyer-section-head">
                     <h2><?= htmlspecialchars(sisonke_t('home_featured_campaigns'), ENT_QUOTES, 'UTF-8') ?></h2>
-                    <a href="<?= $assetBase ?>/pages/campaigns.php"><?= htmlspecialchars(sisonke_t('home_view_all'), ENT_QUOTES, 'UTF-8') ?> <span aria-hidden="true">&rarr;</span></a>
+                    <div class="buyer-section-links">
+                        <a href="<?= $assetBase ?>/pages/campaigns.php"><?= htmlspecialchars(sisonke_t('home_view_all_shop'), ENT_QUOTES, 'UTF-8') ?> <span aria-hidden="true">&rarr;</span></a>
+                        <a href="<?= $assetBase ?>/pages/campaigns.php?sale=1"><?= htmlspecialchars(sisonke_t('home_view_sale_deals'), ENT_QUOTES, 'UTF-8') ?> <span aria-hidden="true">&rarr;</span></a>
+                    </div>
                 </div>
                 <?php if ($campaigns === []): ?>
                     <div class="st-empty"><?= htmlspecialchars(sisonke_t('marketplace_no_campaigns'), ENT_QUOTES, 'UTF-8') ?></div>
@@ -177,7 +182,13 @@ $reasons = [
                                 <a class="buyer-price-row" href="<?= sisonke_e(str_replace(' ', '%20', $campaign['href'])) ?>">
                                     <span>
                                         <small><?= htmlspecialchars(sisonke_t('home_from'), ENT_QUOTES, 'UTF-8') ?></small>
+                                        <?php if ($campaign['price_was'] !== ''): ?>
+                                            <span class="buyer-price-was"><?= htmlspecialchars($campaign['price_was'], ENT_QUOTES, 'UTF-8') ?></span>
+                                        <?php endif; ?>
                                         <strong><?= htmlspecialchars($campaign['price'], ENT_QUOTES, 'UTF-8') ?></strong>
+                                        <?php if ($campaign['discount_label'] !== ''): ?>
+                                            <span class="buyer-price-badge"><?= htmlspecialchars($campaign['discount_label'], ENT_QUOTES, 'UTF-8') ?></span>
+                                        <?php endif; ?>
                                     </span>
                                     <span aria-hidden="true">&rarr;</span>
                                 </a>
@@ -239,8 +250,9 @@ $reasons = [
             </div>
             <nav aria-label="Footer quick links">
                 <h3><?= htmlspecialchars(sisonke_t('home_quick_links'), ENT_QUOTES, 'UTF-8') ?></h3>
-                <a href="#deals"><?= htmlspecialchars(sisonke_t('home_bulk_deals'), ENT_QUOTES, 'UTF-8') ?></a>
-                <a href="#deals"><?= htmlspecialchars(sisonke_t('home_how_it_works'), ENT_QUOTES, 'UTF-8') ?></a>
+                <a href="<?= $assetBase ?>/pages/campaigns.php"><?= htmlspecialchars(sisonke_t('home_nav_shop'), ENT_QUOTES, 'UTF-8') ?></a>
+                <a href="<?= $assetBase ?>/pages/campaigns.php?sale=1"><?= htmlspecialchars(sisonke_t('home_nav_deals'), ENT_QUOTES, 'UTF-8') ?></a>
+                <a href="<?= $assetBase ?>/pages/buyers1.php#how-it-works"><?= htmlspecialchars(sisonke_t('home_how_it_works'), ENT_QUOTES, 'UTF-8') ?></a>
                 <a href="<?= $assetBase ?>/seller/dashboard.php"><?= htmlspecialchars(sisonke_t('home_supplier_portal'), ENT_QUOTES, 'UTF-8') ?></a>
                 <a href="<?= $assetBase ?>/pages/register.php"><?= htmlspecialchars(sisonke_t('home_contact_us'), ENT_QUOTES, 'UTF-8') ?></a>
             </nav>

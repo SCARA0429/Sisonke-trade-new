@@ -2,7 +2,7 @@
 
 ## 2.1 Introduction
 
-Sisonke Trade is a Consumer-to-Consumer e-commerce website prototype built for South African informal traders, side-hustlers, and community buyers. The website lets individuals register as buyers or sellers, list everyday goods, join group-buy campaigns, and complete a secure PayFast sandbox payment and escrow workflow. This responds to the growth of South African online retail, the importance of the informal sector, and the need for trusted digital trade where sellers may not have formal business infrastructure. The project includes a main website, seller website pages, buyer order tracking, multilingual user-facing interface options, and an admin website with Role-Based Access Control (RBAC). Admins can manage users, roles, seller verification, escrow transactions, and disputes. The website prototype is implemented with HTML, CSS, JavaScript, PHP, and MySQL.
+Sisonke Trade is a Consumer-to-Consumer e-commerce website prototype built for South African informal traders, side-hustlers, and community buyers. The website lets individuals register one C2C account that can both buy from other users' campaigns and sell their own goods, join group-buy campaigns, and complete a secure PayFast sandbox payment and escrow workflow. This responds to the growth of South African online retail, the importance of the informal sector, and the need for trusted digital trade where sellers may not have formal business infrastructure. The project includes a main website, seller website pages, buyer order tracking, multilingual user-facing interface options, and an admin website with Role-Based Access Control (RBAC). Admins can manage users, roles, seller verification, escrow transactions, and disputes. The website prototype is implemented with HTML, CSS, JavaScript, PHP, and MySQL.
 
 Research references:
 
@@ -32,13 +32,13 @@ Capture responsive screenshots at 390px mobile, 768px tablet, and 1366px desktop
 | Admin transactions | `/sisonke-trade/admin/transactions.php` | Escrow ledger |
 | Admin disputes | `/sisonke-trade/admin/disputes.php` | Dispute creation and resolution |
 
-Demo logins:
+Demo logins (legacy role-specific demo accounts; public registration creates `role=user`):
 
 | Role | Email | Password |
 |---|---|---|
 | Admin | `admin@sisonke.test` | `Password123` |
-| Seller | `seller@sisonke.test` | `Password123` |
-| Buyer | `buyer@sisonke.test` | `Password123` |
+| Seller (legacy demo) | `seller@sisonke.test` | `Password123` |
+| Buyer (legacy demo) | `buyer@sisonke.test` | `Password123` |
 
 ### Website Capabilities Summary
 
@@ -50,7 +50,7 @@ Sisonke Trade is a working C2C e-commerce website prototype with a main customer
 | Buyer website pages | Buyer registration, buyer login, buyer dashboard, PayFast sandbox checkout, delivery confirmation | Buyers can create an account, log in, browse campaigns, start PayFast sandbox payment, simulate successful payment, join a campaign, view order history, track escrow status, and confirm delivery |
 | Seller website pages | Seller registration, seller dashboard, product form, product table, campaign creation form | Sellers can register, log in, add products, view their product catalogue, pause or activate products, create group-buy campaigns, view campaign progress, and track seller metrics |
 | Admin website | Dashboard, user management page, RBAC form, transaction page, dispute page, seller verification controls | Admins can log in, view website metrics, create users, update users, suspend users, delete users, change roles, assign admin permission levels, verify sellers, view PayFast sandbox transactions, update escrow status, create disputes, and resolve disputes |
-| RBAC | `buyer`, `seller`, and `admin` website roles, plus admin permission levels `super_admin`, `moderator`, and `support` | The website redirects users based on their role and prevents buyers/sellers from accessing admin-only or seller-only pages |
+| RBAC | `user`, `buyer`, `seller`, and `admin` website roles, plus admin permission levels `super_admin`, `moderator`, and `support` | Public registration creates `role=user`, which can access both buyer and seller pages through capability checks. Legacy demo accounts may still use `buyer` or `seller`. Admin is a separate moderation role. |
 | Payment simulation | PayFast sandbox checkout form, PayFast sandbox fields, return page, cancel page, notify endpoint, local success simulation | The website prepares PayFast sandbox payment data, adds a signature only when a passphrase is configured, shows the payment reference, and creates escrow records after simulated PayFast success |
 | Escrow workflow | Escrow table, transaction table, buyer delivery confirmation, admin transaction view | Payments are recorded as held in escrow, then released when the buyer confirms delivery or updated by an admin during dispute management |
 | Multilingual interface | Header language selector, PHP translation helper, session-based language preference | Core user-facing pages can switch between English, isiZulu, isiXhosa, Sesotho, and Afrikaans. UI labels plus seeded/demo campaign descriptions, categories, and common status badges are translated; new seller-created text remains as entered unless translation is added later. |
@@ -65,11 +65,11 @@ Sisonke Trade is a working C2C e-commerce website prototype with a main customer
 | Provide an introduction under 200 words | Section 2.1 introduces the Sisonke Trade C2C website, target users, purpose, admin website, RBAC, and technologies. | Completed |
 | Main website responsive prototypes | Main website pages exist for home, marketplace, campaign detail, PayFast sandbox checkout, and buyer dashboard. The CSS includes responsive layouts for mobile, tablet, and desktop. | Completed in website; screenshots must still be inserted into final submission document |
 | Admin website responsive prototypes | Admin pages exist for dashboard, users/RBAC, transactions, and disputes. Admin layout responds from sidebar desktop view to single-column smaller screens. | Completed in website; screenshots must still be inserted into final submission document |
-| CRC cards | Section 2.3 includes CRC cards for Buyer, Seller, Admin, Product, Campaign, Transaction, EscrowPayment, and Dispute. | Completed |
+| CRC cards | Section 2.3 includes CRC cards for User, Buyer, Seller, Admin, Product, Campaign, CampaignParticipant, Transaction, EscrowPayment, and Dispute. | Completed |
 | Enhanced Entity Relationship Diagram (EERD) | Section 2.3 includes a Mermaid EERD matching the MySQL schema. The full SQL schema is also in `setup/schema.sql`. | Completed |
-| Context Diagram | Section 2.3 includes a context diagram showing Buyer, Seller, Admin, Sisonke Trade Website, PayFast Sandbox, Escrow Records, and Delivery/Pickup. | Completed |
-| Data Flow Diagram (DFD) | Section 2.3 includes a DFD showing registration/login, seller products, campaigns, PayFast sandbox checkout, escrow, delivery confirmation, user/RBAC management, seller verification, transactions, and disputes. | Completed |
-| Use Case Diagram | Section 2.3 includes buyer, seller, and admin use cases, including PayFast sandbox checkout and admin escrow/RBAC actions. | Completed |
+| Context Diagram | Section 2.3 includes a context diagram showing User (C2C trader), Admin, Sisonke Trade Website, PayFast Sandbox, Escrow Records, and Delivery/Pickup. | Completed |
+| Data Flow Diagram (DFD) | Section 2.3 includes a DFD showing unified user registration/login, product and campaign creation, PayFast sandbox checkout, escrow, delivery confirmation, user/RBAC management, seller verification, transactions, and disputes. | Completed |
+| Use Case Diagram | Section 2.3 includes user (C2C) and admin use cases, including both buying and selling actions, PayFast sandbox checkout, and admin escrow/RBAC actions. | Completed |
 | Database design/schema | The database design is documented, and `setup/schema.sql` defines users, buyers, sellers, admins, products, campaigns, participants, escrow, transactions, and disputes. | Completed |
 | Customers must be able to buy goods | Buyers can browse campaigns, open campaign details, start PayFast sandbox checkout, simulate successful payment, and create a campaign participation/order record. | Completed |
 | Customers must be able to sell goods | Sellers can register, add products, manage product status, and create campaigns for buyers to join. | Completed |
@@ -106,29 +106,43 @@ The diagrams in the original Deliverable 2 PDF are based on the correct C2C idea
 | PDF diagram/card | Correlation with current website | Correction or note |
 |---|---|---|
 | Campaign CRC card | Matches the website because campaigns store rules, deadline, min/max participation, status, and buyer participation. | The website releases escrow after buyer delivery confirmation, not only after a fixed 60% confirmation threshold. Campaign also collaborates with Product and Seller. |
-| Buyer CRC card | Matches the website because buyers register, log in, browse campaigns, make PayFast sandbox payments, join campaigns, and confirm delivery. | Confirmation is stored in `campaign_participants.has_confirmed_delivery`; it is not a separate table in the implemented database. |
-| Seller CRC card | Matches the website because sellers create product listings, create campaigns, manage products, and deliver goods. | The PDF repeats the Seller CRC card twice; only one Seller card is required. |
+| User CRC card | Matches the website because every person registers one C2C account (login, name, email, password) and chooses whether to buy, sell, or both. | User owns registration choice and access control. Buyer and Seller are optional profiles, not separate registration paths. |
+| Buyer CRC card | Matches the website because the buyer profile stores delivery details and supports browsing campaigns, PayFast sandbox payments, joining campaigns, and confirming delivery. | Do not put registration on this card. Buyer is an optional profile enabled when the user selects buying. Confirmation is stored in `campaign_participants.has_confirmed_delivery`. |
+| Seller CRC card | Matches the website because the seller profile stores business details and supports product listings, campaigns, and delivery. | Do not put registration on this card. Seller is an optional profile enabled when the user selects selling. |
 | Admin CRC card | Partly matches the website because admins manage users, monitor transactions, and resolve disputes. | Add RBAC responsibilities: create/update/delete users, assign roles, assign admin permission levels, verify sellers, and update escrow/dispute status. |
 | EERD | The PDF page for the EERD appears blank. | Use the EERD in this document. It matches the implemented MySQL schema. |
-| Context diagram | The external actors are correct: Buyer, Seller, Admin, and Payment Gateway. | Rename Payment Gateway to PayFast Sandbox. Product and campaign creation should flow from Seller, not Admin. Admin should manage users/RBAC, transactions, disputes, and seller verification. |
-| DFD | The main processes are correct: manage user, manage campaign, process transaction. | Update D1/D2/D3 to match real tables: users/profile tables, products/campaigns/participants, transactions/escrow/disputes. Add PayFast Sandbox and admin RBAC/dispute management. |
-| Use Case diagram | Mostly matches the website: buyers register/login/join/confirm, sellers list/manage, admins monitor/resolve. | Add Browse Campaigns, PayFast Sandbox Checkout, Manage RBAC, Verify Sellers, and Update Escrow Status. |
+| Context diagram | External actors should reflect unified C2C registration. | Replace separate Buyer and Seller actors with one **User (C2C trader)** actor who both buys and sells. Keep Admin and PayFast Sandbox. Admin manages RBAC, transactions, disputes, and seller verification. |
+| DFD | The main processes are correct: manage user, manage campaign, process transaction. | One **User** actor registers once and creates a `users` row plus optional `buyers` and/or `sellers` profile rows based on the registration choice. User flows cover buying (browse, PayFast checkout, confirm delivery) and/or selling (products, campaigns). Admin flows stay separate. |
+| Use Case diagram | Use cases should match unified C2C accounts. | Replace separate Buyer and Seller actors with one **User (C2C)** actor linked to both buying and selling use cases. Admin use cases stay separate. |
 
 ## 2.3 Designing
 
 ### CRC Cards
 
+Registration is not “pick Buyer or Seller or User.” Everyone gets a **User** account (login, name, email, password). They then choose what they want to do: buy only, sell only, or both. **User** owns that choice. **Buyer** and **Seller** are optional profiles/capabilities, not separate registration paths.
+
 | Class | Responsibilities | Collaborators |
 |---|---|---|
-| Buyer | Register, log in, browse campaigns, start PayFast sandbox checkout, join campaign, view order history, confirm delivery | Campaign, CampaignParticipant, Transaction, EscrowPayment |
-| Seller | Register, log in, create product listings, manage product status, create campaigns, view seller metrics | Product, Campaign, Transaction, Admin |
-| Admin | Manage users, assign roles, assign admin permission levels, verify sellers, monitor transactions, update escrow status, resolve disputes | User, Seller, Transaction, EscrowPayment, Dispute |
-| Product | Store item name, description, category, unit price, stock, image, active status | Seller, Campaign |
-| Campaign | Publish C2C group-buy offer, track price, min/max participation, target quantity, current quantity, deadline, status | Product, Seller, Buyer, CampaignParticipant |
-| CampaignParticipant | Store buyer commitment, quantity, amount paid, joined date, delivery confirmation status | Buyer, Campaign, Transaction |
-| Transaction | Record PayFast sandbox reference, buyer, seller, amount, payment method, transaction status | Buyer, Seller, EscrowPayment, CampaignParticipant |
-| EscrowPayment | Hold PayFast sandbox funds, release after delivery confirmation, refund or mark disputed during admin review | Transaction, Campaign, Admin, Dispute |
-| Dispute | Track moderation case, reason, details, status, resolution note, resolved date | Buyer, Seller, Campaign, Admin, EscrowPayment |
+| User | Register C2C account; choose buy only, sell only, or both at registration; create buyer profile when buy option is selected; create seller profile when sell option is selected; log in; enforce which areas the account may access | Buyer, Seller |
+| Buyer | Optional profile enabled when user selects buying; store delivery details and purchase stats; browse campaigns; start PayFast checkout; join campaign; view orders; confirm delivery | User, Campaign, CampaignParticipant, Transaction, EscrowPayment |
+| Seller | Optional profile enabled when user selects selling; store business name and verification status; create/manage products; create campaigns; view seller metrics | User, Product, Campaign, Transaction, Admin |
+| Admin | Manage users, roles, permissions, seller verification, transactions, escrow, disputes | User, Seller, Transaction, EscrowPayment, Dispute |
+| Product | Store item details, price, stock, image, active status | Seller, Campaign |
+| Campaign | Publish group-buy offer; track price, participation, deadline, status | Product, Seller, Buyer, CampaignParticipant |
+| CampaignParticipant | Store buyer commitment, quantity, amount paid, delivery confirmation | Buyer, Campaign, Transaction |
+| Transaction | Record PayFast reference, buyer, seller, amount, payment method, status | Buyer, Seller, EscrowPayment, CampaignParticipant |
+| EscrowPayment | Hold funds; release after delivery; refund or dispute during admin review | Transaction, Campaign, Admin, Dispute |
+| Dispute | Track moderation case, reason, status, resolution | Buyer, Seller, Campaign, Admin, EscrowPayment |
+
+#### Registration choice and stored roles
+
+| Registration choice | Stored role (example) | Profiles created |
+|---|---|---|
+| Buy only | `buyer` | `buyers` row only |
+| Sell only | `seller` | `sellers` row only |
+| Both | `user` | `buyers` + `sellers` rows |
+
+Legacy demo accounts (`buyer@sisonke.test`, `seller@sisonke.test`) fit this model as examples of buy-only and sell-only accounts. Admins are not created through public registration.
 
 ### Enhanced Entity Relationship Diagram
 
@@ -154,7 +168,7 @@ erDiagram
         string email
         string password_hash
         string full_name
-        enum role
+        enum role "user,buyer,seller,admin"
         boolean is_active
     }
     BUYERS {
@@ -222,39 +236,39 @@ erDiagram
     }
 ```
 
+Public registration always creates a `users` row. Depending on the registration choice, it may also create a `buyers` row (buy only or both), a `sellers` row (sell only or both), and set `users.role` to `buyer`, `seller`, or `user` respectively. Legacy demo accounts may still use `buyer` or `seller` as the stored role, but they use the same profile tables. Admin accounts use `role = admin` and the `admins` profile table only.
+
 ### Context Diagram
 
 ```mermaid
 flowchart LR
-    Buyer[Buyer] -->|Browse, join, confirm| Website[Sisonke Trade C2C Website]
-    Seller[Seller] -->|List products, create campaigns| Website
+    User[User C2C trader] -->|Browse, join, confirm, list products, create campaigns| Website[Sisonke Trade C2C Website]
     Admin[Admin] -->|Manage RBAC, users, sellers, transactions, disputes| Website
     Website -->|Payment request| PayFast[PayFast Sandbox]
     PayFast -->|Sandbox payment result| Website
     Website -->|Hold/release/refund status| Escrow[Escrow Records]
     Website -->|Pickup or delivery status| Delivery[Local delivery or pickup]
-    Delivery -->|Confirmation| Buyer
+    Delivery -->|Confirmation| User
 ```
 
 ### Data Flow Diagram
 
 ```mermaid
 flowchart TD
-    Buyer --> A[Register or Log In]
-    Seller --> A
+    User[User C2C trader] --> A[Register or Log In]
     Admin --> A
     A --> U[(users, buyers, sellers, admins)]
-    Seller --> B[Create Product]
+    User --> B[Create Product]
     B --> P[(products)]
-    Seller --> C[Create Campaign]
+    User --> C[Create Campaign]
     C --> G[(group_buy_campaigns)]
-    Buyer --> D[Browse and Join Campaign]
+    User --> D[Browse and Join Campaign]
     D --> PF[PayFast Sandbox Checkout]
     PF --> D
     D --> CP[(campaign_participants)]
     D --> T[(transactions)]
     D --> E[(escrow_payments)]
-    Buyer --> F[Confirm Delivery]
+    User --> F[Confirm Delivery]
     F --> CP
     F --> E
     Admin --> H[Manage RBAC and Users]
@@ -273,8 +287,7 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    Buyer((Buyer))
-    Seller((Seller))
+    User((User C2C))
     Admin((Admin))
     UC1[Register and log in]
     UC2[Browse campaigns]
@@ -289,14 +302,13 @@ flowchart LR
     UC11[Update escrow status]
     UC12[Join campaign]
 
-    Buyer --> UC1
-    Buyer --> UC2
-    Buyer --> UC3
-    Buyer --> UC12
-    Buyer --> UC4
-    Seller --> UC1
-    Seller --> UC5
-    Seller --> UC6
+    User --> UC1
+    User --> UC2
+    User --> UC3
+    User --> UC12
+    User --> UC4
+    User --> UC5
+    User --> UC6
     Admin --> UC7
     Admin --> UC8
     Admin --> UC9
@@ -468,4 +480,4 @@ Test environment: latest Chromium-based browser (Microsoft Edge / Google Chrome)
 
 ## 2.6 Conclusion
 
-Sisonke Trade demonstrates a C2C e-commerce website designed for South African informal trade. The website prototype supports buyer, seller, and admin roles, with RBAC controls for user management and dispute resolution. Buyers can browse campaigns, simulate PayFast sandbox payment, join a deal, and confirm delivery. Sellers can manage products and launch group-buy campaigns. Admins can manage accounts, verify sellers, monitor escrow transactions, and moderate disputes. The core user-facing pages also support English, isiZulu, isiXhosa, Sesotho, and Afrikaans through a session-based language selector. The implementation uses PHP, MySQL, HTML, CSS, and JavaScript without CMS tools, matching the technical requirements for the deliverable. The next production step would be live hosting, real PayFast merchant credentials, courier or pickup partner integration, and expanded low-data optimisation.
+Sisonke Trade demonstrates a C2C e-commerce website designed for South African informal trade. Public registration creates one `user` account with both buyer and seller profiles, so the same person can browse campaigns, pay through PayFast, confirm delivery, and also list products and launch group-buy campaigns. Admin remains a separate moderation role with RBAC controls for user management and dispute resolution. Admins can manage accounts, verify sellers, monitor escrow transactions, and moderate disputes. The core user-facing pages also support English, isiZulu, isiXhosa, Sesotho, and Afrikaans through a session-based language selector. The implementation uses PHP, MySQL, HTML, CSS, and JavaScript without CMS tools, matching the technical requirements for the deliverable. The next production step would be live hosting, real PayFast merchant credentials, courier or pickup partner integration, and expanded low-data optimisation.

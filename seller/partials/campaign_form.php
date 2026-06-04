@@ -57,13 +57,40 @@ if ($products === []): ?>
         <div class="row g-3">
             <div class="col-md-6">
                 <label class="st-label" for="<?= sisonke_e($formIdPrefix) ?>campaign_price"><?= sisonke_e(sisonke_t('campaign_price')) ?></label>
-                <input class="st-form-control" id="<?= sisonke_e($formIdPrefix) ?>campaign_price" type="number" name="campaign_price" step="0.01" min="1" value="<?= $prefillCampaignPrice !== '' ? sisonke_e($prefillCampaignPrice) : '' ?>" required>
+                <input class="st-form-control js-campaign-base-price" id="<?= sisonke_e($formIdPrefix) ?>campaign_price" type="number" name="campaign_price" step="0.01" min="1" value="<?= $prefillCampaignPrice !== '' ? sisonke_e($prefillCampaignPrice) : '' ?>" required>
             </div>
             <div class="col-md-6">
                 <label class="st-label" for="<?= sisonke_e($formIdPrefix) ?>deadline"><?= sisonke_e(sisonke_t('deadline')) ?></label>
                 <input class="st-form-control" id="<?= sisonke_e($formIdPrefix) ?>deadline" type="datetime-local" name="deadline" required>
             </div>
         </div>
+        <fieldset class="st-discount-panel js-campaign-discount mt-3">
+            <legend class="st-label mb-2"><?= sisonke_e(sisonke_t('campaign_discount_section')) ?></legend>
+            <div class="form-check mb-3">
+                <input class="form-check-input js-campaign-discount-enable" type="checkbox" name="discount_enabled" value="1" id="<?= sisonke_e($formIdPrefix) ?>discount_enabled">
+                <label class="form-check-label" for="<?= sisonke_e($formIdPrefix) ?>discount_enabled"><?= sisonke_e(sisonke_t('campaign_discount_enable')) ?></label>
+            </div>
+            <p class="st-meta mb-3"><?= sisonke_e(sisonke_t('campaign_discount_help')) ?></p>
+            <div class="js-campaign-discount-fields" hidden>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="st-label" for="<?= sisonke_e($formIdPrefix) ?>discount_type"><?= sisonke_e(sisonke_t('campaign_discount_type')) ?></label>
+                        <select class="st-select js-campaign-discount-type" id="<?= sisonke_e($formIdPrefix) ?>discount_type" name="discount_type">
+                            <option value="percent"><?= sisonke_e(sisonke_t('campaign_discount_type_percent')) ?></option>
+                            <option value="fixed"><?= sisonke_e(sisonke_t('campaign_discount_type_fixed')) ?></option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="st-label" for="<?= sisonke_e($formIdPrefix) ?>discount_value"><?= sisonke_e(sisonke_t('campaign_discount_value')) ?></label>
+                        <input class="st-form-control js-campaign-discount-value" id="<?= sisonke_e($formIdPrefix) ?>discount_value" type="number" name="discount_value" step="0.01" min="1" max="90" value="10">
+                    </div>
+                </div>
+                <p class="st-discount-preview mt-3 mb-0">
+                    <span class="st-meta"><?= sisonke_e(sisonke_t('campaign_discount_preview')) ?>:</span>
+                    <strong class="js-campaign-discount-preview-amount">—</strong>
+                </p>
+            </div>
+        </fieldset>
         <div class="row g-3 mt-1">
             <div class="col-md-4">
                 <label class="st-label" for="<?= sisonke_e($formIdPrefix) ?>min_participants"><?= sisonke_e(sisonke_t('minimum_buyers')) ?></label>
