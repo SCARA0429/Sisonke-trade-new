@@ -125,8 +125,9 @@ body {
   z-index: 20;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: clamp(1.5rem, 8vw, 12.4rem);
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 1rem 1.5rem;
   min-height: 72px;
   padding: 16px 24px;
   background: var(--buyer-red);
@@ -167,19 +168,25 @@ body {
 
 .buyer-nav {
   display: flex;
+  flex: 1 1 auto;
   align-items: center;
-  gap: 2rem;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: clamp(1rem, 2vw, 2rem);
+  min-width: 0;
 }
 
 .buyer-nav a {
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
-  height: 36px;
+  min-height: 36px;
   padding-bottom: 4px;
   color: #fff;
   font-size: 18px;
-  line-height: 28px;
-  letter-spacing: -0.9px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
   opacity: 0.9;
 }
 
@@ -193,8 +200,10 @@ body {
 
 .buyer-actions {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 16px;
+  margin-left: auto;
 }
 
 .buyer-user-pill,
@@ -225,6 +234,7 @@ body {
 .buyer-login-link,
 .buyer-logout-form button {
   padding: 0 0.9rem;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -307,7 +317,9 @@ body {
 
 .buyer-search {
   position: relative;
-  width: 256px;
+  flex-shrink: 1;
+  width: clamp(10rem, 16vw, 256px);
+  min-width: 10rem;
 }
 
 .buyer-search input {
@@ -924,10 +936,24 @@ body {
   .buyer-topbar {
     align-items: flex-start;
     flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .buyer-nav {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .buyer-nav::-webkit-scrollbar {
+    display: none;
   }
 
   .buyer-actions {
     width: 100%;
+    margin-left: 0;
     flex-wrap: wrap;
     justify-content: space-between;
   }
