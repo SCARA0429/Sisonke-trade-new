@@ -158,7 +158,34 @@ Sandbox checkouts create the order when PayFast sends the buyer back to the retu
 - Use one project with only MySQL + web service (no extras).
 - Watch **Usage** in the Railway dashboard.
 
+## After every deploy that changes the database
+
+**Redeploying code does not update the live MySQL schema.** Git/Railway only
+replace PHP, CSS, and JS files. Tables and columns must be applied separately.
+
+After pulling schema changes (new tables, columns, messaging, discounts, etc.):
+
+1. Open the **web service Shell** on Railway.
+2. Run:
+
+   ```bash
+   php setup/run_migrations.php
+   ```
+
+3. Confirm the table list includes `campaign_conversations`, `campaign_messages`,
+   and any other new tables.
+
+On **InfinityFree**, paste and run the SQL from `setup/migrate_campaign_messages.sql`
+in phpMyAdmin (SQL tab), or upload and visit a page that loads
+`messaging_service.php` once (e.g. `/pages/messages.php`) so the app can
+auto-create the tables.
+
+**Cursor database panel:** if you connect to local XAMPP, you will see local
+tables only. The hosted site uses the remote InfinityFree/Railway database —
+they are not the same unless you point Cursor at the hosted DB.
+
 ## What is not yet automated
 
 - Database seed on first deploy (run `docker/init-db.sh` once manually).
+- Schema migrations on redeploy (run `php setup/run_migrations.php` manually).
 - Persistent uploads (Railway disk optional; images may reset on redeploy without a volume).
