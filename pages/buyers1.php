@@ -74,7 +74,7 @@ $reasons = [
                 <a href="<?= $assetBase ?>/pages/messages.php"><?= htmlspecialchars(sisonke_t('nav_messages'), ENT_QUOTES, 'UTF-8') ?></a>
             <?php endif; ?>
             <?php if ($canSell): ?>
-                <a href="<?= $assetBase ?>/seller/dashboard.php"><?= htmlspecialchars(sisonke_t('nav_seller'), ENT_QUOTES, 'UTF-8') ?></a>
+                <a href="<?= $assetBase ?>/seller/dashboard.php"><?= htmlspecialchars(sisonke_t('nav_my_shop'), ENT_QUOTES, 'UTF-8') ?></a>
             <?php endif; ?>
         </nav>
         <div class="buyer-actions">

@@ -28,14 +28,19 @@ $navLinks = [
     ['label' => sisonke_t('nav_marketplace'), 'href' => $baseHref . '/pages/campaigns.php'],
 ];
 
-if (sisonke_role_can_act_as($role, 'buyer')) {
+$canBuy = sisonke_role_can_act_as($role, 'buyer');
+$canSell = sisonke_role_can_act_as($role, 'seller');
+
+if ($canBuy) {
     $navLinks[] = ['label' => sisonke_t('nav_my_orders'), 'href' => $baseHref . '/pages/dashboard.php'];
-    $navLinks[] = ['label' => sisonke_t('nav_messages'), 'href' => $baseHref . '/pages/messages.php'];
 }
-if (sisonke_role_can_act_as($role, 'seller')) {
-    $navLinks[] = ['label' => sisonke_t('nav_seller'), 'href' => $baseHref . '/seller/dashboard.php'];
-    $navLinks[] = ['label' => sisonke_t('nav_products'), 'href' => $baseHref . '/seller/my_products.php'];
-    $navLinks[] = ['label' => sisonke_t('nav_messages'), 'href' => $baseHref . '/seller/messages.php'];
+
+if ($canSell) {
+    $navLinks[] = ['label' => sisonke_t('nav_my_shop'), 'href' => $baseHref . '/seller/dashboard.php'];
+}
+
+if ($canBuy || $canSell) {
+    $navLinks[] = ['label' => sisonke_t('nav_messages'), 'href' => $baseHref . '/pages/messages.php'];
 }
 if ($role === 'admin') {
     $navLinks[] = ['label' => sisonke_t('nav_admin'), 'href' => $baseHref . '/admin/dashboard.php'];
