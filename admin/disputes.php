@@ -79,43 +79,33 @@ require_once dirname(__DIR__) . '/includes/header.php';
             <div class="alert alert-<?= sisonke_e($flash['type'] === 'success' ? 'success' : 'danger') ?>"><?= sisonke_e($flash['message']) ?></div>
         <?php endforeach; ?>
 
-        <div class="st-grid st-grid-2">
-            <article class="st-card">
-                <div class="st-card-body">
-                    <h2 class="st-card-title mb-3">Open dispute</h2>
-                    <form method="post" action="<?= sisonke_e(SISONKE_BASE_URL) ?>/admin/disputes.php">
-                        <input type="hidden" name="action" value="create_dispute">
-                        <div class="mb-3">
-                            <label class="st-label" for="transaction_id">Transaction</label>
-                            <select class="st-select" id="transaction_id" name="transaction_id" required>
-                                <?php foreach ($transactions as $transaction): ?>
-                                    <option value="<?= (int) $transaction['transaction_id'] ?>">
-                                        <?= sisonke_e($transaction['reference_number']) ?> - <?= sisonke_e($transaction['buyer_name']) ?> - <?= sisonke_money($transaction['amount']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="st-label" for="reason">Reason</label>
-                            <input class="st-form-control" id="reason" name="reason" maxlength="255" value="Delivery or product quality review" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="st-label" for="details">Details</label>
-                            <textarea class="st-textarea" id="details" name="details"></textarea>
-                        </div>
-                        <button class="st-btn st-btn-yellow" type="submit" <?= $transactions === [] ? 'disabled' : '' ?>>Create Dispute</button>
-                    </form>
-                </div>
-            </article>
-
-            <article class="st-card">
-                <div class="st-card-body">
-                    <h2 class="st-card-title mb-3">Resolution workflow</h2>
-                    <p>Admin RBAC separates queue visibility from moderation actions. Support admins can view this page, moderators can update cases, and super admins can manage all users and disputes.</p>
-                    <p class="st-meta mb-0">When a dispute is opened, the linked demo escrow can be held as disputed until an admin resolves or rejects the case.</p>
-                </div>
-            </article>
-        </div>
+        <article class="st-card mb-4">
+            <div class="st-card-body">
+                <h2 class="st-card-title mb-3">Open dispute</h2>
+                <form method="post" action="<?= sisonke_e(SISONKE_BASE_URL) ?>/admin/disputes.php">
+                    <input type="hidden" name="action" value="create_dispute">
+                    <div class="mb-3">
+                        <label class="st-label" for="transaction_id">Transaction</label>
+                        <select class="st-select" id="transaction_id" name="transaction_id" required>
+                            <?php foreach ($transactions as $transaction): ?>
+                                <option value="<?= (int) $transaction['transaction_id'] ?>">
+                                    <?= sisonke_e($transaction['reference_number']) ?> - <?= sisonke_e($transaction['buyer_name']) ?> - <?= sisonke_money($transaction['amount']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="st-label" for="reason">Reason</label>
+                        <input class="st-form-control" id="reason" name="reason" maxlength="255" value="Delivery or product quality review" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="st-label" for="details">Details</label>
+                        <textarea class="st-textarea" id="details" name="details"></textarea>
+                    </div>
+                    <button class="st-btn st-btn-yellow" type="submit" <?= $transactions === [] ? 'disabled' : '' ?>>Create Dispute</button>
+                </form>
+            </div>
+        </article>
 
         <article class="st-card mt-4">
             <div class="st-card-body">
