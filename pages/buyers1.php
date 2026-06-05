@@ -255,15 +255,15 @@ $reasons = [
                 <a href="<?= $assetBase ?>/pages/campaigns.php?sale=1"><?= htmlspecialchars(sisonke_t('home_nav_deals'), ENT_QUOTES, 'UTF-8') ?></a>
                 <a href="<?= $assetBase ?>/pages/buyers1.php#how-it-works"><?= htmlspecialchars(sisonke_t('home_how_it_works'), ENT_QUOTES, 'UTF-8') ?></a>
                 <a href="<?= $assetBase ?>/seller/dashboard.php"><?= htmlspecialchars(sisonke_t('home_supplier_portal'), ENT_QUOTES, 'UTF-8') ?></a>
-                <a href="<?= $assetBase ?>/pages/register.php"><?= htmlspecialchars(sisonke_t('home_contact_us'), ENT_QUOTES, 'UTF-8') ?></a>
+                <a href="mailto:support@sisonke.test"><?= htmlspecialchars(sisonke_t('home_contact_us'), ENT_QUOTES, 'UTF-8') ?></a>
             </nav>
             <div>
                 <h3><?= htmlspecialchars(sisonke_t('home_contact'), ENT_QUOTES, 'UTF-8') ?></h3>
-                <p>Johannesburg, Gauteng<br>support@sisonketrade.local</p>
+                <p>Johannesburg, Gauteng<br><a href="mailto:support@sisonke.test">support@sisonke.test</a></p>
                 <div class="buyer-socials" aria-label="Social links">
-                    <a href="#" aria-label="Facebook">f</a>
-                    <a href="#" aria-label="Twitter">t</a>
-                    <a href="#" aria-label="Instagram">i</a>
+                    <a href="<?= $assetBase ?>/pages/campaigns.php" aria-label="Browse marketplace on Facebook">f</a>
+                    <a href="<?= $assetBase ?>/pages/campaigns.php" aria-label="Browse marketplace on Twitter">t</a>
+                    <a href="<?= $assetBase ?>/pages/campaigns.php" aria-label="Browse marketplace on Instagram">i</a>
                 </div>
             </div>
         </div>

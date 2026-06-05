@@ -7,12 +7,12 @@ declare(strict_types=1);
  * Safe to run multiple times (uses CREATE IF NOT EXISTS / column checks).
  *
  * Railway: open web service Shell → php setup/run_migrations.php
- * InfinityFree: run via SSH/cron/phpMyAdmin SQL tab using the .sql files instead.
  */
 
 require_once dirname(__DIR__) . '/config/db.php';
 require_once dirname(__DIR__) . '/includes/messaging_service.php';
 require_once dirname(__DIR__) . '/includes/payfast_service.php';
+require_once __DIR__ . '/cleanup_production.php';
 
 echo "Sisonke Trade — running database migrations...\n\n";
 
@@ -31,6 +31,10 @@ try {
          MODIFY COLUMN role ENUM('user','buyer','seller','admin') NOT NULL"
     );
     echo "  users.role enum: OK\n";
+
+    $cleanup = sisonke_cleanup_production_data($pdo);
+    echo "  cleanup: removed {$cleanup['campaigns_removed']} junk campaign(s), {$cleanup['products_removed']} junk product(s)\n";
+    echo "  demo discount: applied to {$cleanup['discounts_applied']} School Shoes campaign(s)\n";
 
     $tables = $pdo->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN);
     sort($tables);

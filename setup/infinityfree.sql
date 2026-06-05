@@ -285,11 +285,23 @@ WHERE NOT EXISTS (
 );
 
 INSERT INTO group_buy_campaigns
-  (seller_id, product_id, campaign_price, min_participants, max_participants, target_quantity, target_amount, deadline, status)
-SELECT @seller_id, @shoes_id, 120.00, 8, 60, 40, 4800.00, DATE_ADD(NOW(), INTERVAL 14 DAY), 'active'
+  (seller_id, product_id, campaign_price, discount_enabled, discount_type, discount_value, sale_price,
+   min_participants, max_participants, target_quantity, target_amount, deadline, status)
+SELECT @seller_id, @shoes_id, 120.00, 1, 'percent', 10.00, 108.00,
+       8, 60, 40, 4800.00, DATE_ADD(NOW(), INTERVAL 14 DAY), 'active'
 WHERE NOT EXISTS (
   SELECT 1 FROM group_buy_campaigns WHERE seller_id = @seller_id AND product_id = @shoes_id
 );
+
+UPDATE group_buy_campaigns c
+INNER JOIN products p ON c.product_id = p.product_id
+SET c.discount_enabled = 1,
+    c.discount_type = 'percent',
+    c.discount_value = 10.00,
+    c.sale_price = 108.00
+WHERE c.seller_id = @seller_id
+  AND p.name = 'School Shoes'
+  AND c.status = 'active';
 
 INSERT INTO group_buy_campaigns
   (seller_id, product_id, campaign_price, min_participants, max_participants, target_quantity, target_amount, deadline, status)

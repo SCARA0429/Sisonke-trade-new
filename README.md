@@ -11,7 +11,8 @@ transactions, and dispute resolution.
 
 ## Live demo
 
-- **URL:** your Railway domain, e.g. `https://sisonke-trade.up.railway.app`
+- **URL:** https://sisonke-trade-new-production.up.railway.app
+- **Repository:** https://github.com/SCARA0429/Sisonke-trade-new
 - **Host:** Railway (Railpack / FrankenPHP + MySQL)
 - **Deploy:** Railway auto-deploy on push to `main`; GitHub Actions runs PHP lint + Docker build
 

@@ -174,6 +174,8 @@ After pulling schema changes (new tables, columns, messaging, discounts, etc.):
 
 3. Confirm the table list includes `campaign_conversations`, `campaign_messages`,
    and any other new tables.
+4. The script also removes accidental test products/campaigns and enables the
+   School Shoes launch discount for the on-sale demo page.
 
 On **InfinityFree**, paste and run the SQL from `setup/migrate_campaign_messages.sql`
 in phpMyAdmin (SQL tab), or upload and visit a page that loads

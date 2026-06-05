@@ -38,7 +38,7 @@ docs/screenshots/
 
 ## How to capture a clean screenshot
 
-1. Open `http://sisonketrade.xo.je/` in Microsoft Edge or Google Chrome.
+1. Open `https://sisonke-trade-new-production.up.railway.app/` in Microsoft Edge or Google Chrome.
 2. Open DevTools with F12 and click the **Toggle device toolbar** icon
    (or press Ctrl+Shift+M). Set the responsive width manually to
    **390 px**, **768 px**, or **1366 px** as required by the row you are
@@ -63,6 +63,8 @@ tablet 768 px, desktop 1366 px). That is 12 pages times 3 widths
 |---|---|---|
 | `buyers1` | `/pages/buyers1.php` | Logged out, default language |
 | `campaigns` | `/pages/campaigns.php` | Marketplace search + cards |
+| `campaigns_sale` | `/pages/campaigns.php?sale=1` | On-sale / discounted campaigns |
+| `messages` | `/pages/messages.php` | Logged in as buyer — messaging inbox |
 | `campaign_detail` | `/pages/campaign_detail.php?id=1` | Logged in as buyer so the Join form is visible |
 | `payfast_checkout` | `/pages/payfast_checkout.php` | Reach by POSTing from a campaign detail page |
 | `buyer_dashboard` | `/pages/dashboard.php` | Logged in as buyer with at least one order |
@@ -76,9 +78,9 @@ tablet 768 px, desktop 1366 px). That is 12 pages times 3 widths
 
 ## Database screenshots required by Deliverable 2
 
-Open phpMyAdmin from the InfinityFree vPanel, then for each table below
-open it, set "Show" to 25 rows, and capture the schema strip at the
-top plus the first few rows. 10 PNGs total.
+Connect to the **Railway MySQL** database (Cursor database panel, Railway query tab, or
+TablePlus via TCP). For each table below, capture the schema/columns and the first few
+rows. 12 PNGs total.
 
 | File name | Table |
 |---|---|
@@ -92,6 +94,8 @@ top plus the first few rows. 10 PNGs total.
 | `db_escrow_payments.png` | `escrow_payments` |
 | `db_transactions.png` | `transactions` |
 | `db_disputes.png` | `disputes` |
+| `db_campaign_conversations.png` | `campaign_conversations` |
+| `db_campaign_messages.png` | `campaign_messages` |
 
 ## Test evidence screenshots
 
@@ -119,8 +123,8 @@ the next click.
 
 ## Sign-off checklist
 
-- [ ] 36 responsive PNGs captured at 390, 768, and 1366 widths.
-- [ ] 10 database PNGs captured from phpMyAdmin.
+- [ ] 39+ responsive PNGs captured at 390, 768, and 1366 widths (includes messages + on-sale pages).
+- [ ] 12 database PNGs captured from Railway MySQL.
 - [ ] 22 test evidence PNGs captured and referenced in the test table.
 - [ ] At least 4 PNGs in each of the 6 user manual flows.
 - [ ] All file names follow the conventions above.
