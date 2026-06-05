@@ -27,11 +27,14 @@ try {
     sisonke_bootstrap_payfast_schema($pdo);
     echo "  payfast schema: OK\n";
 
+    $pdo->exec("UPDATE users SET role = 'user' WHERE role IN ('buyer', 'seller', 'member')");
+    echo "  legacy roles migrated to user: OK\n";
+
     $pdo->exec(
         "ALTER TABLE users
-         MODIFY COLUMN role ENUM('user','buyer','seller','admin','member') NOT NULL"
+         MODIFY COLUMN role ENUM('user','admin') NOT NULL"
     );
-    echo "  users.role enum: OK\n";
+    echo "  users.role enum (user/admin only): OK\n";
 
     $lecturerAccounts = sisonke_seed_lecturer_users($pdo);
     echo "  lecturer accounts: " . implode(', ', $lecturerAccounts) . "\n";

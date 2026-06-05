@@ -13,8 +13,7 @@ function sisonke_dashboard_path_for_role(string $role): string
 {
     return match ($role) {
         'admin' => SISONKE_BASE_URL . '/admin/dashboard.php',
-        'seller' => SISONKE_BASE_URL . '/seller/dashboard.php',
-        'buyer', 'user', 'member' => SISONKE_BASE_URL . '/pages/buyers1.php',
+        'user' => SISONKE_BASE_URL . '/pages/buyers1.php',
         default => SISONKE_BASE_URL . '/pages/login.php',
     };
 }
@@ -40,8 +39,7 @@ function sisonke_role_can_act_as(string $role, string $capability): bool
     $capability = strtolower(trim($capability));
 
     return match ($capability) {
-        'buyer' => in_array($role, ['user', 'buyer', 'seller'], true),
-        'seller' => in_array($role, ['user', 'seller'], true),
+        'buyer', 'seller' => $role === 'user',
         'admin' => $role === 'admin',
         default => false,
     };

@@ -65,11 +65,13 @@ foreach ($users as $user) {
 
 $profileValue = '';
 if ($editing) {
-    $profileValue = match ((string) $editing['role']) {
-        'seller' => (string) ($editing['business_name'] ?? ''),
-        'admin' => (string) ($editing['permission_level'] ?? 'support'),
-        default => (string) ($editing['delivery_address'] ?? ''),
-    };
+    if ((string) $editing['role'] === 'admin') {
+        $profileValue = (string) ($editing['permission_level'] ?? 'support');
+    } else {
+        $profileValue = (string) (($editing['business_name'] ?? '') !== ''
+            ? $editing['business_name']
+            : ($editing['delivery_address'] ?? ''));
+    }
 }
 
 $pageTitle = 'Users and RBAC';
@@ -112,13 +114,13 @@ require_once dirname(__DIR__) . '/includes/header.php';
                             <div class="col-md-4">
                                 <label class="st-label" for="role">Role</label>
                                 <select class="st-select js-role-select" id="role" name="role" <?= !$permissions['can_manage_users'] ? 'disabled' : '' ?>>
-                                    <?php foreach (['buyer', 'seller', 'admin'] as $role): ?>
-                                        <option value="<?= $role ?>" <?= (($editing['role'] ?? 'buyer') === $role) ? 'selected' : '' ?>><?= ucfirst($role) ?></option>
+                                    <?php foreach (['user', 'admin'] as $role): ?>
+                                        <option value="<?= $role ?>" <?= (($editing['role'] ?? 'user') === $role) ? 'selected' : '' ?>><?= ucfirst($role) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="st-label" for="profile_value">Address/business</label>
+                                <label class="st-label" for="profile_value">Business / delivery</label>
                                 <input class="st-form-control" id="profile_value" name="profile_value" value="<?= sisonke_e($profileValue) ?>" <?= !$permissions['can_manage_users'] ? 'disabled' : '' ?>>
                             </div>
                             <div class="col-md-4">
@@ -165,8 +167,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><td>Buyer</td><td>Marketplace, orders, delivery confirmation</td><td>None</td></tr>
-                                <tr><td>Seller</td><td>Products, campaigns, sales view</td><td>None</td></tr>
+                                <tr><td>User (C2C)</td><td>Marketplace, buy, sell, messages</td><td>None</td></tr>
                                 <tr><td>Support</td><td>Admin read access</td><td>View queues</td></tr>
                                 <tr><td>Moderator</td><td>Admin moderation</td><td>Resolve disputes</td></tr>
                                 <tr><td>Super admin</td><td>Full admin</td><td>Manage users and RBAC</td></tr>
@@ -195,11 +196,11 @@ require_once dirname(__DIR__) . '/includes/header.php';
                         <tbody>
                             <?php foreach ($users as $user): ?>
                                 <?php
-                                $userProfile = match ((string) $user['role']) {
-                                    'seller' => (string) ($user['business_name'] ?? ''),
-                                    'admin' => (string) ($user['permission_level'] ?? 'support'),
-                                    default => (string) ($user['delivery_address'] ?? ''),
-                                };
+                                $userProfile = (string) ($user['role'] === 'admin'
+                                    ? ($user['permission_level'] ?? 'support')
+                                    : trim((string) ($user['business_name'] ?? '') . (
+                                        !empty($user['business_name']) && !empty($user['delivery_address']) ? ' · ' : ''
+                                    ) . (string) ($user['delivery_address'] ?? '')));
                                 ?>
                                 <tr>
                                     <td>
@@ -210,7 +211,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
                                     <td><?= sisonke_e($userProfile) ?></td>
                                     <td><span class="st-badge <?= (bool) $user['is_active'] ? 'st-badge-green' : 'st-badge-muted' ?>"><?= (bool) $user['is_active'] ? 'active' : 'suspended' ?></span></td>
                                     <td>
-                                        <?php if ($user['role'] === 'seller'): ?>
+                                        <?php if ($user['role'] === 'user' && !empty($user['business_name'])): ?>
                                             <form class="d-flex gap-2" method="post" action="<?= sisonke_e(SISONKE_BASE_URL) ?>/admin/users.php">
                                                 <input type="hidden" name="action" value="verify_seller">
                                                 <input type="hidden" name="seller_id" value="<?= (int) $user['user_id'] ?>">

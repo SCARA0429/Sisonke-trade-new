@@ -82,8 +82,10 @@ function seed_campaign(PDO $pdo, int $sellerId, int $productId, float $price, in
 }
 
 $adminId = seed_user($pdo, 'admin@sisonke.test', 'Nandi Mokoena', 'admin', '', 'super_admin');
-$sellerId = seed_user($pdo, 'seller@sisonke.test', 'Thabo Dlamini', 'seller', 'Bhekizizwe Traders');
-$buyerId = seed_user($pdo, 'buyer@sisonke.test', 'Lerato Nkosi', 'buyer', '321 Vilakazi Street, Soweto');
+$sellerId = seed_user($pdo, 'seller@sisonke.test', 'Thabo Dlamini', 'user', 'Bhekizizwe Traders');
+$buyerId = seed_user($pdo, 'buyer@sisonke.test', 'Lerato Nkosi', 'user', '321 Vilakazi Street, Soweto');
+$pdo->prepare('UPDATE sellers SET business_name = ? WHERE seller_id = ?')->execute(['Lerato Nkosi', $buyerId]);
+$pdo->prepare('UPDATE buyers SET delivery_address = ? WHERE buyer_id = ?')->execute(['Johannesburg, Gauteng', $sellerId]);
 
 $pdo->prepare("UPDATE sellers SET verification_status = 'verified', reputation_score = 4.80 WHERE seller_id = ?")->execute([$sellerId]);
 

@@ -916,30 +916,6 @@ function sisonke_fetch_admin_users(PDO $pdo): array
 
 function sisonke_sync_user_profile(PDO $pdo, int $userId, string $role, string $profileValue, string $permissionLevel = 'support'): void
 {
-    if ($role === 'buyer') {
-        $pdo->prepare('DELETE FROM sellers WHERE seller_id = ?')->execute([$userId]);
-        $pdo->prepare('DELETE FROM admins WHERE admin_id = ?')->execute([$userId]);
-        $stmt = $pdo->prepare(
-            'INSERT INTO buyers (buyer_id, delivery_address)
-             VALUES (?, ?)
-             ON DUPLICATE KEY UPDATE delivery_address = VALUES(delivery_address)'
-        );
-        $stmt->execute([$userId, $profileValue !== '' ? $profileValue : 'Collection point to be confirmed']);
-        return;
-    }
-
-    if ($role === 'seller') {
-        $pdo->prepare('DELETE FROM buyers WHERE buyer_id = ?')->execute([$userId]);
-        $pdo->prepare('DELETE FROM admins WHERE admin_id = ?')->execute([$userId]);
-        $stmt = $pdo->prepare(
-            'INSERT INTO sellers (seller_id, business_name, verification_status)
-             VALUES (?, ?, ?)
-             ON DUPLICATE KEY UPDATE business_name = VALUES(business_name)'
-        );
-        $stmt->execute([$userId, $profileValue !== '' ? $profileValue : 'Community Seller', 'pending']);
-        return;
-    }
-
     if ($role === 'user') {
         $pdo->prepare('DELETE FROM admins WHERE admin_id = ?')->execute([$userId]);
         $stmtBuyer = $pdo->prepare(
@@ -954,13 +930,6 @@ function sisonke_sync_user_profile(PDO $pdo, int $userId, string $role, string $
              ON DUPLICATE KEY UPDATE business_name = VALUES(business_name)'
         );
         $stmtSeller->execute([$userId, $profileValue !== '' ? $profileValue : 'Community Seller', 'pending']);
-        return;
-    }
-
-    if ($role === 'member') {
-        $pdo->prepare('DELETE FROM buyers WHERE buyer_id = ?')->execute([$userId]);
-        $pdo->prepare('DELETE FROM sellers WHERE seller_id = ?')->execute([$userId]);
-        $pdo->prepare('DELETE FROM admins WHERE admin_id = ?')->execute([$userId]);
         return;
     }
 
@@ -990,7 +959,7 @@ function sisonke_save_admin_user(PDO $pdo, ?int $userId, array $data): array
 {
     $email = strtolower(trim((string) ($data['email'] ?? '')));
     $fullName = trim((string) ($data['full_name'] ?? ''));
-    $role = strtolower(trim((string) ($data['role'] ?? 'buyer')));
+    $role = strtolower(trim((string) ($data['role'] ?? 'user')));
     $profileValue = trim((string) ($data['profile_value'] ?? ''));
     $permissionLevel = trim((string) ($data['permission_level'] ?? 'support'));
     $password = (string) ($data['password'] ?? '');
@@ -1002,8 +971,8 @@ function sisonke_save_admin_user(PDO $pdo, ?int $userId, array $data): array
     if ($fullName === '' || strlen($fullName) > 120) {
         return ['success' => false, 'message' => 'Enter a full name under 120 characters.'];
     }
-    if (!in_array($role, ['buyer', 'seller', 'admin'], true)) {
-        return ['success' => false, 'message' => 'Choose buyer, seller, or admin.'];
+    if (!in_array($role, ['user', 'admin'], true)) {
+        return ['success' => false, 'message' => 'Choose user or admin.'];
     }
     if ($userId === null && strlen($password) < 6) {
         return ['success' => false, 'message' => 'New users need a password of at least 6 characters.'];

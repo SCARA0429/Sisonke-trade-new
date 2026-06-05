@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(255) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   full_name VARCHAR(120) NOT NULL,
-  role ENUM('user','buyer','seller','admin','member') NOT NULL,
+  role ENUM('user','admin') NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   is_active TINYINT(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -223,8 +223,8 @@ SET @demo_password_hash = '$2y$10$RZXu.X.VgUq.QhuKDg7jdu6yzSRHYaYZmNdSZ01JHttZgv
 INSERT INTO users (email, password_hash, full_name, role, is_active)
 VALUES
   ('admin@sisonke.test', @demo_password_hash, 'Nandi Mokoena', 'admin', 1),
-  ('seller@sisonke.test', @demo_password_hash, 'Thabo Dlamini', 'seller', 1),
-  ('buyer@sisonke.test', @demo_password_hash, 'Lerato Nkosi', 'buyer', 1)
+  ('seller@sisonke.test', @demo_password_hash, 'Thabo Dlamini', 'user', 1),
+  ('buyer@sisonke.test', @demo_password_hash, 'Lerato Nkosi', 'user', 1)
 ON DUPLICATE KEY UPDATE
   password_hash = VALUES(password_hash),
   full_name = VALUES(full_name),
@@ -251,6 +251,16 @@ ON DUPLICATE KEY UPDATE
 
 INSERT INTO buyers (buyer_id, delivery_address, total_purchases, total_confirmations)
 VALUES (@buyer_id, '321 Vilakazi Street, Soweto', 0, 0)
+ON DUPLICATE KEY UPDATE
+  delivery_address = VALUES(delivery_address);
+
+INSERT INTO sellers (seller_id, business_name, verification_status, reputation_score, total_sales)
+VALUES (@buyer_id, 'Lerato Nkosi', 'pending', 0.00, 0)
+ON DUPLICATE KEY UPDATE
+  business_name = VALUES(business_name);
+
+INSERT INTO buyers (buyer_id, delivery_address, total_purchases, total_confirmations)
+VALUES (@seller_id, 'Johannesburg, Gauteng', 0, 0)
 ON DUPLICATE KEY UPDATE
   delivery_address = VALUES(delivery_address);
 

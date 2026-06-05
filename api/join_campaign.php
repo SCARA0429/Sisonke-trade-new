@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
 
+require_once dirname(__DIR__) . '/includes/auth_service.php';
 require_once dirname(__DIR__) . '/includes/marketplace_service.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -16,9 +17,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     exit;
 }
 
-if (($_SESSION['user_role'] ?? '') !== 'buyer') {
+$role = (string) ($_SESSION['user_role'] ?? '');
+if (!sisonke_role_can_act_as($role, 'buyer')) {
     http_response_code(403);
-    echo json_encode(['success' => false, 'message' => 'Log in as a buyer to join campaigns.']);
+    echo json_encode(['success' => false, 'message' => 'Log in as a community trader to join campaigns.']);
     exit;
 }
 

@@ -105,15 +105,12 @@
 
     function updateLabels() {
       var role = roleSelect.value;
-      if (role === 'seller') {
-        profileLabel.textContent = 'Business name';
-        profileInput.placeholder = 'Example: Mama Nandi Spaza';
-      } else if (role === 'admin') {
+      if (role === 'admin') {
         profileLabel.textContent = 'Admin note';
         profileInput.placeholder = 'Optional internal note';
       } else {
-        profileLabel.textContent = 'Delivery address';
-        profileInput.placeholder = 'Street, area, city';
+        profileLabel.textContent = 'Business / delivery';
+        profileInput.placeholder = 'Business name or delivery address';
       }
 
       if (permissionSelect) {
