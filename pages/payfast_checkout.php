@@ -105,32 +105,6 @@ require_once dirname(__DIR__) . '/includes/header.php';
             </div>
         </article>
     </div>
-
-    <?php if (sisonke_payfast_is_sandbox()): ?>
-    <article class="st-card mt-4">
-        <div class="st-card-body">
-            <h2 class="st-card-title mb-3"><?= sisonke_e(sisonke_t('payfast_fields_sent')) ?></h2>
-            <div class="st-table-wrap">
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th><?= sisonke_e(sisonke_t('field')) ?></th>
-                            <th><?= sisonke_e(sisonke_t('value')) ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($payfastData as $name => $value): ?>
-                            <tr>
-                                <td><?= sisonke_e($name) ?></td>
-                                <td><?= sisonke_e($value) ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </article>
-    <?php endif; ?>
 </section>
 <?php
 require_once dirname(__DIR__) . '/includes/footer.php';
