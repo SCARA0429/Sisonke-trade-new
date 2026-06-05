@@ -23,8 +23,8 @@ function sisonke_seed_lecturer_users(PDO $pdo): array
             'email' => 'sByrne@gmail.com',
             'password' => 'bestLecturer4always!',
             'full_name' => 'S Byrne',
-            'role' => 'member',
-            'profile_value' => '',
+            'role' => 'user',
+            'profile_value' => 'S Byrne',
             'permission_level' => 'support',
         ],
     ];
