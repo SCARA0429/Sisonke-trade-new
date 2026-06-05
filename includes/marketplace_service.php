@@ -940,6 +940,34 @@ function sisonke_sync_user_profile(PDO $pdo, int $userId, string $role, string $
         return;
     }
 
+    if ($role === 'user') {
+        $pdo->prepare('DELETE FROM admins WHERE admin_id = ?')->execute([$userId]);
+        $stmtBuyer = $pdo->prepare(
+            'INSERT INTO buyers (buyer_id, delivery_address)
+             VALUES (?, ?)
+             ON DUPLICATE KEY UPDATE delivery_address = VALUES(delivery_address)'
+        );
+        $stmtBuyer->execute([$userId, $profileValue !== '' ? $profileValue : '']);
+        $stmtSeller = $pdo->prepare(
+            'INSERT INTO sellers (seller_id, business_name, verification_status)
+             VALUES (?, ?, ?)
+             ON DUPLICATE KEY UPDATE business_name = VALUES(business_name)'
+        );
+        $stmtSeller->execute([$userId, $profileValue !== '' ? $profileValue : 'Community Seller', 'pending']);
+        return;
+    }
+
+    if ($role === 'member') {
+        $pdo->prepare('DELETE FROM buyers WHERE buyer_id = ?')->execute([$userId]);
+        $pdo->prepare('DELETE FROM sellers WHERE seller_id = ?')->execute([$userId]);
+        $pdo->prepare('DELETE FROM admins WHERE admin_id = ?')->execute([$userId]);
+        return;
+    }
+
+    if ($role !== 'admin') {
+        return;
+    }
+
     $pdo->prepare('DELETE FROM buyers WHERE buyer_id = ?')->execute([$userId]);
     $pdo->prepare('DELETE FROM sellers WHERE seller_id = ?')->execute([$userId]);
     $permissionLevel = in_array($permissionLevel, ['super_admin', 'moderator', 'support'], true)

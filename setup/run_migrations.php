@@ -13,6 +13,7 @@ require_once dirname(__DIR__) . '/config/db.php';
 require_once dirname(__DIR__) . '/includes/messaging_service.php';
 require_once dirname(__DIR__) . '/includes/payfast_service.php';
 require_once __DIR__ . '/cleanup_production.php';
+require_once __DIR__ . '/seed_lecturer_users.php';
 
 echo "Sisonke Trade — running database migrations...\n\n";
 
@@ -28,9 +29,12 @@ try {
 
     $pdo->exec(
         "ALTER TABLE users
-         MODIFY COLUMN role ENUM('user','buyer','seller','admin') NOT NULL"
+         MODIFY COLUMN role ENUM('user','buyer','seller','admin','member') NOT NULL"
     );
     echo "  users.role enum: OK\n";
+
+    $lecturerAccounts = sisonke_seed_lecturer_users($pdo);
+    echo "  lecturer accounts: " . implode(', ', $lecturerAccounts) . "\n";
 
     $cleanup = sisonke_cleanup_production_data($pdo);
     echo "  cleanup: removed {$cleanup['campaigns_removed']} junk campaign(s), {$cleanup['products_removed']} junk product(s)\n";
