@@ -84,7 +84,6 @@ require_once dirname(__DIR__) . '/includes/header.php';
 
     <div class="d-flex flex-column flex-md-row gap-2 mb-4">
         <a class="st-btn st-btn-yellow" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/seller/my_products.php"><?= sisonke_e(sisonke_t('manage_products')) ?></a>
-        <a class="st-btn st-btn-outline" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/seller/messages.php"><?= sisonke_e(sisonke_t('nav_messages')) ?></a>
         <?php if ($hasActiveProduct): ?>
             <a class="st-btn" href="<?= sisonke_e(SISONKE_BASE_URL) ?>/seller/my_products.php?step=campaign"><?= sisonke_e(sisonke_t('create_campaign')) ?></a>
         <?php else: ?>

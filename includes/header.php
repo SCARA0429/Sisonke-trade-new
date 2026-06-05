@@ -42,10 +42,8 @@ if ($canSell) {
 if ($canBuy || $canSell) {
     $navLinks[] = ['label' => sisonke_t('nav_messages'), 'href' => $baseHref . '/pages/messages.php'];
 }
-if ($role === 'admin') {
-    $navLinks[] = ['label' => sisonke_t('nav_admin'), 'href' => $baseHref . '/admin/dashboard.php'];
-    $navLinks[] = ['label' => sisonke_t('nav_users'), 'href' => $baseHref . '/admin/users.php'];
-}
+
+// Admin pages use the sidebar for Users, Transactions, and Disputes.
 ?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars(sisonke_html_language(), ENT_QUOTES, 'UTF-8') ?>">

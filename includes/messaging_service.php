@@ -327,6 +327,11 @@ function sisonke_conversation_thread_url(int $conversationId): string
     return SISONKE_BASE_URL . '/pages/campaign_message.php?id=' . $conversationId;
 }
 
+function sisonke_messages_inbox_url(): string
+{
+    return SISONKE_BASE_URL . '/pages/messages.php';
+}
+
 function sisonke_conversation_start_url(int $campaignId): string
 {
     return SISONKE_BASE_URL . '/pages/campaign_message.php?campaign=' . $campaignId;

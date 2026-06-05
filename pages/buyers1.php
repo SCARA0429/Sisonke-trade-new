@@ -71,10 +71,12 @@ $reasons = [
             <a href="<?= $assetBase ?>/pages/campaigns.php?sale=1"><?= htmlspecialchars(sisonke_t('home_nav_deals'), ENT_QUOTES, 'UTF-8') ?></a>
             <?php if ($canBuy): ?>
                 <a href="<?= $assetBase ?>/pages/dashboard.php"><?= htmlspecialchars(sisonke_t('nav_my_orders'), ENT_QUOTES, 'UTF-8') ?></a>
-                <a href="<?= $assetBase ?>/pages/messages.php"><?= htmlspecialchars(sisonke_t('nav_messages'), ENT_QUOTES, 'UTF-8') ?></a>
             <?php endif; ?>
             <?php if ($canSell): ?>
                 <a href="<?= $assetBase ?>/seller/dashboard.php"><?= htmlspecialchars(sisonke_t('nav_my_shop'), ENT_QUOTES, 'UTF-8') ?></a>
+            <?php endif; ?>
+            <?php if ($canBuy || $canSell): ?>
+                <a href="<?= $assetBase ?>/pages/messages.php"><?= htmlspecialchars(sisonke_t('nav_messages'), ENT_QUOTES, 'UTF-8') ?></a>
             <?php endif; ?>
         </nav>
         <div class="buyer-actions">
@@ -254,7 +256,9 @@ $reasons = [
                 <a href="<?= $assetBase ?>/pages/campaigns.php"><?= htmlspecialchars(sisonke_t('home_nav_shop'), ENT_QUOTES, 'UTF-8') ?></a>
                 <a href="<?= $assetBase ?>/pages/campaigns.php?sale=1"><?= htmlspecialchars(sisonke_t('home_nav_deals'), ENT_QUOTES, 'UTF-8') ?></a>
                 <a href="<?= $assetBase ?>/pages/buyers1.php#how-it-works"><?= htmlspecialchars(sisonke_t('home_how_it_works'), ENT_QUOTES, 'UTF-8') ?></a>
-                <a href="<?= $assetBase ?>/seller/dashboard.php"><?= htmlspecialchars(sisonke_t('home_supplier_portal'), ENT_QUOTES, 'UTF-8') ?></a>
+                <?php if ($canSell): ?>
+                    <a href="<?= $assetBase ?>/seller/dashboard.php"><?= htmlspecialchars(sisonke_t('nav_my_shop'), ENT_QUOTES, 'UTF-8') ?></a>
+                <?php endif; ?>
                 <a href="mailto:support@sisonke.test"><?= htmlspecialchars(sisonke_t('home_contact_us'), ENT_QUOTES, 'UTF-8') ?></a>
             </nav>
             <div>

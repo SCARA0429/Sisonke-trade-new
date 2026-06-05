@@ -44,7 +44,7 @@ if (!$conversation || !sisonke_user_can_access_conversation($conversation, $user
     $pageTitle = sisonke_t('messages_not_found_title');
     require_once dirname(__DIR__) . '/includes/header.php';
     echo '<section class="st-page"><div class="st-empty">' . sisonke_e(sisonke_t('messages_not_found'))
-        . ' <a href="' . sisonke_e(SISONKE_BASE_URL) . '/pages/messages.php">' . sisonke_e(sisonke_t('messages_back_inbox')) . '</a></div></section>';
+        . ' <a href="' . sisonke_e(sisonke_messages_inbox_url()) . '">' . sisonke_e(sisonke_t('messages_back_inbox')) . '</a></div></section>';
     require_once dirname(__DIR__) . '/includes/footer.php';
     exit;
 }
@@ -52,9 +52,7 @@ if (!$conversation || !sisonke_user_can_access_conversation($conversation, $user
 $messages = sisonke_fetch_conversation_messages($pdo, $conversationId);
 $isBuyer = $userId === (int) $conversation['buyer_id'];
 $otherParty = $isBuyer ? (string) $conversation['business_name'] : (string) $conversation['buyer_name'];
-$inboxHref = $isBuyer
-    ? SISONKE_BASE_URL . '/pages/messages.php'
-    : SISONKE_BASE_URL . '/seller/messages.php';
+$inboxHref = sisonke_messages_inbox_url();
 $hasPurchased = !empty($conversation['participant_id']);
 
 $pageTitle = sisonke_t('messages_thread_title', ['campaign' => (string) $conversation['product_name']]);
