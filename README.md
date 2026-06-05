@@ -1,13 +1,12 @@
 # Sisonke Trade
 
 A consumer-to-consumer (C2C) group-buying web prototype built for South
-African informal traders, side-hustlers, and community buyers. Sisonke
-Trade lets individuals register as buyers or sellers, list everyday
-goods, join group-buy campaigns, and complete a secure PayFast
-sandbox payment + escrow workflow. It includes a multilingual buyer
-website, a seller portal, and an admin portal with Role-Based Access
-Control (RBAC) covering user management, seller verification, escrow
-transactions, and dispute resolution.
+African informal traders, side-hustlers, and community buyers. Each person
+registers one account (`role=user`) that can buy from campaigns and sell
+their own goods. PayFast sandbox handles payments and escrow. The site
+includes a multilingual public area, seller tools, and an admin portal
+with RBAC for user management, seller verification, transactions, and
+disputes.
 
 ## Live demo
 
@@ -20,9 +19,10 @@ transactions, and dispute resolution.
 
 | Role | Email | Password |
 |---|---|---|
-| Admin | `admin@sisonke.test` | `Password123` |
-| Seller | `seller@sisonke.test` | `Password123` |
-| Buyer | `buyer@sisonke.test` | `Password123` |
+| Admin (demo) | `admin@sisonke.test` | `Password123` |
+| C2C user (demo) | `seller@sisonke.test` or `buyer@sisonke.test` | `Password123` |
+| Admin (submission) | `sByrneAdmin@gmail.com` | `bestLecturer4eva!` |
+| C2C user (submission) | `sByrne@gmail.com` | `bestLecturer4always!` |
 
 ## Tech stack
 
@@ -64,7 +64,7 @@ sisonke-trade/
   includes/     Shared services (auth, marketplace, payfast, header/footer, i18n)
   pages/        Public + buyer pages (home, marketplace, login, register, dashboard, payfast)
   seller/       Seller portal (dashboard, my_products, create_campaign)
-  setup/        schema.sql, infinityfree.sql, seed_demo.php
+  setup/        schema.sql, infinityfree.sql, seed_demo.php, run_migrations.php
   tools/        Hosting/health diagnostics
   docker/       Optional local Docker image + DB init scripts
   .github/      GitHub Actions CI workflow
@@ -88,7 +88,7 @@ sisonke-trade/
 
 | Capability | Where it lives |
 |---|---|
-| Register / login as buyer or seller | `pages/register.php`, `pages/login.php`, `includes/auth_service.php` |
+| Register / login (C2C user or admin) | `pages/register.php`, `pages/login.php`, `includes/auth_service.php` |
 | Browse and search the marketplace | `pages/campaigns.php` |
 | Open a campaign and join it | `pages/campaign_detail.php`, `api/join_campaign.php` |
 | PayFast sandbox checkout + escrow | `pages/payfast_checkout.php`, `pages/payfast_return.php`, `api/payfast_notify.php`, `includes/payfast_service.php` |

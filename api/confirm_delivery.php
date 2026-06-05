@@ -20,7 +20,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
 $role = (string) ($_SESSION['user_role'] ?? '');
 if (!sisonke_role_can_act_as($role, 'buyer')) {
     http_response_code(403);
-    echo json_encode(['success' => false, 'message' => 'Log in as a community trader to confirm delivery.']);
+    echo json_encode(['success' => false, 'message' => 'Log in to confirm delivery.']);
     exit;
 }
 

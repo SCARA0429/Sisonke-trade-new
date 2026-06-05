@@ -6,7 +6,7 @@ require_once dirname(__DIR__) . '/includes/auth_service.php';
 require_once dirname(__DIR__) . '/includes/marketplace_service.php';
 
 /**
- * Lecturer / assessor accounts (safe to re-run — updates passwords and roles).
+ * Submission login accounts (safe to re-run; updates passwords and roles).
  */
 function sisonke_seed_lecturer_users(PDO $pdo): array
 {

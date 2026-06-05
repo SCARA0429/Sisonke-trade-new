@@ -249,7 +249,7 @@ function sisonke_translations(): array
             'buyer' => 'Buyer',
             'seller' => 'Seller',
             'delivery_or_business' => 'Delivery address or business name',
-            'delivery_business_placeholder' => 'Buyers: street address. Sellers: trading / business name.',
+            'delivery_business_placeholder' => 'Delivery address or business / trading name.',
             'delivery_business_help' => 'Buyers enter a delivery address. Sellers enter a business name.',
             'password_help' => 'Use at least 6 characters.',
             'confirm_password' => 'Confirm password',

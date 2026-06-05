@@ -15,7 +15,7 @@ require_once dirname(__DIR__) . '/includes/payfast_service.php';
 require_once __DIR__ . '/cleanup_production.php';
 require_once __DIR__ . '/seed_lecturer_users.php';
 
-echo "Sisonke Trade — running database migrations...\n\n";
+echo "Sisonke Trade - running database migrations...\n\n";
 
 try {
     sisonke_bootstrap_marketplace_schema($pdo);
@@ -37,7 +37,7 @@ try {
     echo "  users.role enum (user/admin only): OK\n";
 
     $lecturerAccounts = sisonke_seed_lecturer_users($pdo);
-    echo "  lecturer accounts: " . implode(', ', $lecturerAccounts) . "\n";
+    echo "  submission accounts: " . implode(', ', $lecturerAccounts) . "\n";
 
     $cleanup = sisonke_cleanup_production_data($pdo);
     echo "  cleanup: removed {$cleanup['campaigns_removed']} junk campaign(s), {$cleanup['products_removed']} junk product(s)\n";

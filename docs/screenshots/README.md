@@ -64,7 +64,7 @@ tablet 768 px, desktop 1366 px). That is 12 pages times 3 widths
 | `buyers1` | `/pages/buyers1.php` | Logged out, default language |
 | `campaigns` | `/pages/campaigns.php` | Marketplace search + cards |
 | `campaigns_sale` | `/pages/campaigns.php?sale=1` | On-sale / discounted campaigns |
-| `messages` | `/pages/messages.php` | Logged in as buyer — messaging inbox |
+| `messages` | `/pages/messages.php` | Logged in as C2C user — messaging inbox |
 | `campaign_detail` | `/pages/campaign_detail.php?id=1` | Logged in as buyer so the Join form is visible |
 | `payfast_checkout` | `/pages/payfast_checkout.php` | Reach by POSTing from a campaign detail page |
 | `buyer_dashboard` | `/pages/dashboard.php` | Logged in as buyer with at least one order |
@@ -78,7 +78,7 @@ tablet 768 px, desktop 1366 px). That is 12 pages times 3 widths
 
 ## Database screenshots required by Deliverable 2
 
-Connect to the **Railway MySQL** database (Cursor database panel, Railway query tab, or
+Connect to the **Railway MySQL** database (Railway query tab, phpMyAdmin, or
 TablePlus via TCP). For each table below, capture the schema/columns and the first few
 rows. 12 PNGs total.
 

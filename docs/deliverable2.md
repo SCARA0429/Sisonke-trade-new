@@ -2,23 +2,17 @@
 
 ## 2.1 Introduction
 
-**Hook (Problem)**  
 Informal traders and community buyers in South Africa often coordinate bulk deals on WhatsApp and classified sites with little payment protection, weak accountability, and no clear way to resolve late or failed deliveries.
 
-**Context (Market)**  
-Online retail and township digital shopping are growing, yet most platforms target formal stores or one-off sales—not traders who both buy and sell essentials in volume.
+Online retail and township digital shopping are growing, but most platforms target formal stores or one-off sales rather than traders who both buy and sell essentials in volume.
 
-**Gap (What's Missing)**  
 Few tools combine C2C group-buy campaigns, escrow, seller verification, per-campaign messaging, multilingual access, and admin moderation for everyday informal trade.
 
-**Solution (Your Platform)**  
-Sisonke Trade is a C2C group-buying website prototype: one account to browse or launch campaigns, pay via PayFast sandbox into escrow, confirm delivery, and message sellers before or after purchase; admins use RBAC to verify sellers, monitor transactions, and resolve disputes (PHP, MySQL, HTML, CSS, JavaScript).
+Sisonke Trade is a C2C group-buying website prototype built for this gap. One account can browse or launch campaigns, pay via PayFast sandbox into escrow, confirm delivery, and message other traders before or after purchase. Admins use RBAC to verify sellers, monitor transactions, and resolve disputes. The implementation uses PHP, MySQL, HTML, CSS, and JavaScript.
 
-**Objectives (What You'll Do)**  
-Design and build responsive buyer, seller, and admin sites; document the system with CRC cards, EERD, context diagram, DFD, use cases, code samples, and test evidence.
+The project includes responsive public, seller, and admin pages, plus documentation with CRC cards, EERD, context diagram, DFD, use cases, code samples, and test evidence.
 
-**Scope (Boundaries)**  
-Academic prototype only—PayFast sandbox, no live settlement, courier APIs, or native apps; custom code, no CMS; hosted demo with screenshots and source for lecturer review.
+This submission is an academic prototype only: PayFast sandbox (no live settlement), no courier APIs or native apps, custom code with no CMS, and a hosted demo with screenshots and source code for marking.
 
 Research references:
 
@@ -44,7 +38,7 @@ Capture responsive screenshots at 390px mobile, 768px tablet, and 1366px desktop
 | On-sale deals | `/pages/campaigns.php?sale=1` | Discounted campaigns (School Shoes demo) |
 | Campaign detail | `/pages/campaign_detail.php?id=1` | Product, seller trust, escrow join form |
 | Buyer messages | `/pages/messages.php` | Campaign messaging inbox (logged in as buyer) |
-| PayFast sandbox checkout | `/pages/payfast_checkout.php` | Payment summary and PayFast sandbox fields after posting from a campaign |
+| PayFast sandbox checkout | `/pages/payfast_checkout.php` | Payment summary and continue button after posting from a campaign |
 | Buyer dashboard | `/pages/dashboard.php` | Orders, escrow status, delivery confirmation |
 | Seller dashboard | `/seller/dashboard.php` | Seller metrics and campaign table |
 | Seller products | `/seller/my_products.php` | Product CRUD form and catalogue |
@@ -53,26 +47,26 @@ Capture responsive screenshots at 390px mobile, 768px tablet, and 1366px desktop
 | Admin transactions | `/admin/transactions.php` | Escrow ledger |
 | Admin disputes | `/admin/disputes.php` | Dispute creation and resolution |
 
-Demo logins (legacy role-specific demo accounts; public registration creates `role=user`):
+Demo and submission logins (stored roles are `user` or `admin` only):
 
-| Role | Email | Password |
+| Account | Email | Password |
 |---|---|---|
-| Admin | `admin@sisonke.test` | `Password123` |
-| Seller (legacy demo) | `seller@sisonke.test` | `Password123` |
-| Buyer (legacy demo) | `buyer@sisonke.test` | `Password123` |
+| Admin (demo) | `admin@sisonke.test` | `Password123` |
+| C2C user (demo) | `seller@sisonke.test` or `buyer@sisonke.test` | `Password123` |
+| Admin (submission) | `sByrneAdmin@gmail.com` | `bestLecturer4eva!` |
+| C2C user (submission) | `sByrne@gmail.com` | `bestLecturer4always!` |
 
 ### Website Capabilities Summary
 
-Sisonke Trade is a working C2C e-commerce website prototype with a main customer website, seller pages, buyer pages, and an admin website. The website supports the following functions:
+Sisonke Trade is a working C2C e-commerce website prototype with a public website, trader tools (orders and shop), and an admin area. The website supports the following functions:
 
 | Website area | What it has | What it can do |
 |---|---|---|
-| Main website | Home page, marketplace page, campaign detail page, search form, responsive product/campaign cards | Visitors can view the Sisonke Trade brand, browse active C2C group-buy campaigns, search goods, view seller details, see campaign progress, and open a specific campaign |
-| Buyer website pages | Buyer registration, buyer login, buyer dashboard, PayFast sandbox checkout, delivery confirmation | Buyers can create an account, log in, browse campaigns, start PayFast sandbox payment, simulate successful payment, join a campaign, view order history, track escrow status, and confirm delivery |
-| Seller website pages | Seller registration, seller dashboard, product form, product table, campaign creation form | Sellers can register, log in, add products, view their product catalogue, pause or activate products, create group-buy campaigns, view campaign progress, and track seller metrics |
+| Main website | Home page, marketplace page, campaign detail page, search form, responsive product/campaign cards | Visitors can view the Sisonke Trade brand, browse active C2C group-buy campaigns, search goods, view trader details, see campaign progress, and open a specific campaign |
+| C2C user area | Registration, login, My Orders, My Shop, messages, PayFast sandbox checkout, delivery confirmation | A logged-in user can create one account, browse campaigns, buy through PayFast sandbox, confirm delivery, list products, create campaigns, and message other traders |
 | Admin website | Dashboard, user management page, RBAC form, transaction page, dispute page, seller verification controls | Admins can log in, view website metrics, create users, update users, suspend users, delete users, change roles, assign admin permission levels, verify sellers, view PayFast sandbox transactions, update escrow status, create disputes, and resolve disputes |
-| RBAC | `user`, `buyer`, `seller`, and `admin` website roles, plus admin permission levels `super_admin`, `moderator`, and `support` | Public registration creates `role=user`, which can access both buyer and seller pages through capability checks. Legacy demo accounts may still use `buyer` or `seller`. Admin is a separate moderation role. |
-| Payment simulation | PayFast sandbox checkout form, PayFast sandbox fields, return page, cancel page, notify endpoint, local success simulation | The website prepares PayFast sandbox payment data, adds a signature only when a passphrase is configured, shows the payment reference, and creates escrow records after simulated PayFast success |
+| RBAC | `user` and `admin` login roles, plus admin permission levels `super_admin`, `moderator`, and `support` | Public registration creates `role=user` with buyer and seller profile rows, so the same person can buy and sell. Admin is a separate moderation role. |
+| Payment simulation | PayFast sandbox checkout form, return page, cancel page, notify endpoint, local success simulation | The website prepares PayFast sandbox payment data, adds a signature when a passphrase is configured, shows the payment reference, and creates escrow records after simulated PayFast success |
 | Escrow workflow | Escrow table, transaction table, buyer delivery confirmation, admin transaction view | Payments are recorded as held in escrow, then released when the buyer confirms delivery or updated by an admin during dispute management |
 | Multilingual interface | Header language selector, PHP translation helper, session-based language preference | Core user-facing pages can switch between English, isiZulu, isiXhosa, Sesotho, and Afrikaans. UI labels plus seeded/demo campaign descriptions, categories, and common status badges are translated; new seller-created text remains as entered unless translation is added later. |
 | Database | MySQL schema, foreign keys, role-specific profile tables, seed data | The website stores users, buyers, sellers, admins, products, campaigns, participants, escrow payments, transactions, and disputes |
@@ -82,7 +76,7 @@ Sisonke Trade is a working C2C e-commerce website prototype with a main customer
 
 | Deliverable 2 requirement | Project evidence | Status |
 |---|---|---|
-| The project must be C2C, not B2C, B2B, or hybrid | The website is a true C2C marketplace. Public registration creates one account (role=user) that can both buy from other users' campaigns and list its own goods for sale. Existing demo accounts kept the legacy buyer/seller roles for backward compatibility. Admins are a separate role used only for moderation and RBAC, not commerce. | Completed |
+| The project must be C2C, not B2C, B2B, or hybrid | The website is a true C2C marketplace. Public registration creates one account (`role=user`) that can both buy from other users' campaigns and list its own goods for sale. Admins are a separate role used only for moderation and RBAC, not commerce. | Completed |
 | Provide an introduction under 200 words | Section 2.1 introduces the Sisonke Trade C2C website, target users, purpose, admin website, RBAC, and technologies. | Completed |
 | Main website responsive prototypes | Main website pages exist for home, marketplace, campaign detail, PayFast sandbox checkout, and buyer dashboard. The CSS includes responsive layouts for mobile, tablet, and desktop. | Completed in website; screenshots must still be inserted into final submission document |
 | Admin website responsive prototypes | Admin pages exist for dashboard, users/RBAC, transactions, and disputes. Admin layout responds from sidebar desktop view to single-column smaller screens. | Completed in website; screenshots must still be inserted into final submission document |
@@ -94,9 +88,9 @@ Sisonke Trade is a working C2C e-commerce website prototype with a main customer
 | Database design/schema | The database design is documented, and `setup/schema.sql` defines users, buyers, sellers, admins, products, campaigns, participants, escrow, transactions, and disputes. | Completed |
 | Customers must be able to buy goods | Buyers can browse campaigns, open campaign details, start PayFast sandbox checkout, simulate successful payment, and create a campaign participation/order record. | Completed |
 | Customers must be able to sell goods | Sellers can register, add products, manage product status, and create campaigns for buyers to join. | Completed |
-| Deliverable 1 multilingual objective | The main website, buyer pages, seller pages, login/register, and PayFast sandbox pages include a language selector for English, isiZulu, isiXhosa, Sesotho, and Afrikaans. This is UI translation only, so it does not require EERD or DFD changes. | Completed |
+| Deliverable 1 multilingual objective | The main website, trader pages, login/register, and PayFast sandbox pages include a language selector for English, isiZulu, isiXhosa, Sesotho, and Afrikaans. This is UI translation only, so it does not require EERD or DFD changes. | Completed |
 | Admin website must support RBAC | Admin users have permission levels. `super_admin` can manage users, `moderator` can resolve disputes, and `support` can view admin queues. | Completed |
-| RBAC must create, display, update, and delete different user types | Admin users can create buyers, sellers, and admins; display all accounts; update roles and profile information; suspend users; and delete users. | Completed |
+| RBAC must create, display, update, and delete different user types | Admin users can create C2C users and admins; display all accounts; update roles and profile information; suspend users; and delete users. | Completed |
 | HTML must be used | PHP page templates output semantic HTML forms, tables, sections, and navigation. | Completed |
 | CSS must be used | `assets/css/style.css` contains the main website, seller, buyer, admin, and responsive styling. | Completed |
 | JavaScript or jQuery accepted | `assets/js/main.js` handles login form enhancement and admin RBAC form label behaviour. | Completed |
@@ -115,7 +109,7 @@ The website functionality, hosting, and documentation are complete for Deliverab
 
 - Insert actual mobile, tablet, and desktop screenshots of the main website pages (see `docs/screenshots/README.md`).
 - Insert actual mobile, tablet, and desktop screenshots of the admin website pages.
-- Insert MySQL table screenshots from the Railway database (via Cursor database panel or Railway MySQL query tab).
+- Insert MySQL table screenshots from the Railway database (Railway query tab, phpMyAdmin, or TablePlus).
 - Export or screenshot the Mermaid diagrams if the lecturer requires image diagrams instead of Markdown code.
 - PayFast sandbox testing uses PayFast's public sandbox credentials by default: merchant ID `10000100` and merchant key `46f0cd694581a`. Replace them with the student's own sandbox merchant ID/key if using a personal PayFast sandbox account.
 
@@ -154,15 +148,14 @@ Registration is not “pick Buyer or Seller or User.” Everyone gets a **User**
 | EscrowPayment | Hold funds; release after delivery; refund or dispute during admin review | Transaction, Campaign, Admin, Dispute |
 | Dispute | Track moderation case, reason, status, resolution | Buyer, Seller, Campaign, Admin, EscrowPayment |
 
-#### Registration choice and stored roles
+#### Registration and stored roles
 
-| Registration choice | Stored role (example) | Profiles created |
+| Account type | Stored role | Profiles created |
 |---|---|---|
-| Buy only | `buyer` | `buyers` row only |
-| Sell only | `seller` | `sellers` row only |
-| Both | `user` | `buyers` + `sellers` rows |
+| C2C trader | `user` | `buyers` + `sellers` rows |
+| Admin | `admin` | `admins` row only |
 
-Legacy demo accounts (`buyer@sisonke.test`, `seller@sisonke.test`) fit this model as examples of buy-only and sell-only accounts. Admins are not created through public registration.
+Demo emails such as `buyer@sisonke.test` and `seller@sisonke.test` are sample C2C users only; they still use `role=user`. Admins are not created through public registration.
 
 ### Enhanced Entity Relationship Diagram
 
@@ -188,7 +181,7 @@ erDiagram
         string email
         string password_hash
         string full_name
-        enum role "user,buyer,seller,admin"
+        enum role "user,admin"
         boolean is_active
     }
     BUYERS {
@@ -256,7 +249,7 @@ erDiagram
     }
 ```
 
-Public registration always creates a `users` row. Depending on the registration choice, it may also create a `buyers` row (buy only or both), a `sellers` row (sell only or both), and set `users.role` to `buyer`, `seller`, or `user` respectively. Legacy demo accounts may still use `buyer` or `seller` as the stored role, but they use the same profile tables. Admin accounts use `role = admin` and the `admins` profile table only.
+Public registration always creates a `users` row with `role=user`, plus matching rows in `buyers` and `sellers`. Admin accounts use `role=admin` and the `admins` profile table only.
 
 ### Context Diagram
 
@@ -454,7 +447,7 @@ Test environment: latest Chromium-based browser (Microsoft Edge / Google Chrome)
 | TC-01 | Register unified C2C account | Open `/pages/register.php`, fill in name, email, password, confirm password, submit | `full_name=Test Trader`, `email=tc01@sisonke.test`, `password=Password123` | Redirects to `/pages/login.php?registered=1`. New row in `users` (role=user) plus matching rows in `buyers` (delivery_address blank, ready for first checkout) and `sellers` (business_name defaulted to full_name, verification_status=pending). | Redirect and account created on Railway. | Pass | `docs/screenshots/tests/TC-01.png` |
 | TC-02 | New account can buy and sell | After TC-01, log in as `tc01@sisonke.test` and confirm the navbar shows **My Orders**, **My Shop**, and **Messages** (each once), then open `/pages/dashboard.php` and `/seller/dashboard.php` without role-redirect | session from TC-01 | Navbar shows buyer and seller links because `role=user` satisfies both `require_auth('buyer')` and `require_auth('seller')` via `sisonke_role_can_act_as`. No duplicate Messages or top-level Products links. Both dashboards load. | Both dashboards load with unified nav links. | Pass | `docs/screenshots/tests/TC-02.png` |
 | TC-03 | Register duplicate email | Repeat TC-01 with the same email | `email=tc01@sisonke.test` | Page reloads with error "Email already exists." No new row inserted. | Duplicate email rejected. | Pass | `docs/screenshots/tests/TC-03.png` |
-| TC-04 | Login valid | Open `/pages/login.php`, submit demo credentials | `email=buyer@sisonke.test`, `password=Password123` | Redirects to `/pages/buyers1.php` (buyer dashboard path resolved by `sisonke_dashboard_path_for_role`). Session contains `user_id`, `user_role=buyer`, `user_name`. | Redirected to buyer home with session populated. | Pass | `docs/screenshots/tests/TC-04.png` |
+| TC-04 | Login valid | Open `/pages/login.php`, submit demo credentials | `email=buyer@sisonke.test`, `password=Password123` | Redirects to `/pages/buyers1.php`. Session contains `user_id`, `user_role=user`, `user_name`. | Redirected to home with session populated. | Pass | `docs/screenshots/tests/TC-04.png` |
 | TC-05 | Login invalid | Open `/pages/login.php`, submit a wrong password | `email=buyer@sisonke.test`, `password=wrong` | Page reloads with error "Invalid email or password." Session is not populated. | Invalid password rejected. | Pass | `docs/screenshots/tests/TC-05.png` |
 
 ### Buyer flow (TC-06 to TC-11)
@@ -482,7 +475,7 @@ Test environment: latest Chromium-based browser (Microsoft Edge / Google Chrome)
 | Test ID | Feature | Steps | Input | Expected result | Actual result | Pass/Fail | Evidence |
 |---|---|---|---|---|---|---|---|
 | TC-16 | Admin login | Open `/pages/login.php` and submit admin credentials | `email=admin@sisonke.test`, `password=Password123` | Redirects to `/admin/dashboard.php` showing total users, live campaigns, escrow held, and open disputes metrics. | Admin dashboard metrics displayed. | Pass | `docs/screenshots/tests/TC-16.png` |
-| TC-17 | Admin creates user | On `/admin/users.php`, fill the Create user form with role buyer and submit | `full_name=Admin Made`, `email=tc17@sisonke.test`, `role=buyer`, `profile_value=Diepkloof`, `password=Password123`, `is_active=1` | Success flash, new buyer appears in the "All accounts" table with status active. Corresponding row in `users` and `buyers`. | User created from admin form. | Pass | `docs/screenshots/tests/TC-17.png` |
+| TC-17 | Admin creates user | On `/admin/users.php`, fill the Create user form with role user and submit | `full_name=Admin Made`, `email=tc17@sisonke.test`, `role=user`, `profile_value=Diepkloof`, `password=Password123`, `is_active=1` | Success flash, new user appears in the "All accounts" table with status active. Corresponding rows in `users`, `buyers`, and `sellers`. | User created from admin form. | Pass | `docs/screenshots/tests/TC-17.png` |
 | TC-18 | Suspend user | On `/admin/users.php`, click Suspend on the TC-17 user | `user_id` from TC-17 | Status badge flips to suspended, `users.is_active=0`. If that user tries to log in or hits any protected page, `require_auth` destroys the session and redirects to `/pages/login.php?error=account_suspended`. | Suspended user blocked from login. | Pass | `docs/screenshots/tests/TC-18.png` |
 | TC-19 | Verify seller | On `/admin/users.php`, on the seller row select "verified" and click Set | seller row, `verification_status=verified` | `sellers.verification_status` updates. The verification badge on `/pages/campaign_detail.php` reads "verified" for any campaign by that seller. | Seller verification badge updates on campaign detail. | Pass | `docs/screenshots/tests/TC-19.png` |
 | TC-20 | Resolve dispute | Open `/admin/disputes.php`, open a dispute, set status to resolved with a resolution note | dispute id, `status=resolved`, `resolution_note=Refund issued` | `disputes.status=resolved`, `disputes.resolution_note` populated, dispute moves out of the open queue on `/admin/dashboard.php`. | Demo dispute resolved from admin queue. | Pass | `docs/screenshots/tests/TC-20.png` |
@@ -491,7 +484,7 @@ Test environment: latest Chromium-based browser (Microsoft Edge / Google Chrome)
 
 | Test ID | Feature | Steps | Input | Expected result | Actual result | Pass/Fail | Evidence |
 |---|---|---|---|---|---|---|---|
-| TC-21 | Buyer blocked from admin area | Logged in as buyer, navigate directly to `/admin/dashboard.php` | n/a | `require_auth('admin')` in `includes/auth_check.php` redirects the buyer back to `sisonke_dashboard_path_for_role('buyer')` -> `/pages/buyers1.php`. No admin metrics are rendered. | Buyer redirected away from admin area. | Pass | `docs/screenshots/tests/TC-21.png` |
+| TC-21 | C2C user blocked from admin area | Logged in as C2C user, navigate directly to `/admin/dashboard.php` | n/a | `require_auth('admin')` in `includes/auth_check.php` redirects the user back to `sisonke_dashboard_path_for_role('user')` -> `/pages/buyers1.php`. No admin metrics are rendered. | User redirected away from admin area. | Pass | `docs/screenshots/tests/TC-21.png` |
 | TC-22 | Support admin cannot manage users | Log in as a support-level admin and open `/admin/users.php` | `permission_level=support` | The Create/Update form fields and action buttons render with `disabled`. Submitting any save/toggle/delete POST is rejected by `sisonke_require_admin_capability('can_manage_users')` with a danger flash and no DB write. | Support admin UI restricted as designed. | Pass | `docs/screenshots/tests/TC-22.png` |
 
 ### Test summary

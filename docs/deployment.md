@@ -182,9 +182,9 @@ in phpMyAdmin (SQL tab), or upload and visit a page that loads
 `messaging_service.php` once (e.g. `/pages/messages.php`) so the app can
 auto-create the tables.
 
-**Cursor database panel:** if you connect to local XAMPP, you will see local
-tables only. The hosted site uses the remote InfinityFree/Railway database —
-they are not the same unless you point Cursor at the hosted DB.
+**MySQL client note:** if you connect to local XAMPP, you will see local
+tables only. The hosted site uses the Railway database;
+they are not the same unless you connect to the hosted MySQL service.
 
 ## What is not yet automated
 
